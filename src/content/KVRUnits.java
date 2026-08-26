@@ -1,6 +1,7 @@
 package extra.content;
 
 import arc.graphics.Color;
+import extra.ai.CompanionAI;
 import mindustry.gen.UnitEntity;
 import mindustry.type.UnitType;
 
@@ -9,17 +10,22 @@ public class KVRUnits {
 
     public static void load() {
         ping = new UnitType("ping") {{
+            localizedName = "Ping";
+            description = "A friendly dimensional guide drone.";
+            
+            // Link Companion Follow AI
+            aiController = CompanionAI::new;
             constructor = UnitEntity::create;
             
             // Physical & Flight Settings
             flying = true;
             lowAltitude = true;
-            speed = 3.8f;
-            accel = 0.08f;
-            drag = 0.04f;
+            speed = 4.2f;
+            accel = 0.12f;
+            drag = 0.05f;
             hitSize = 8f;
             health = 100f;
-            physics = false; // Floats freely through structures
+            physics = false;
 
             // Passive & Untargetable Flags
             targetable = false;
@@ -29,14 +35,13 @@ public class KVRUnits {
             logicControllable = false;
             drawMinimap = false;
 
-            // Purple Engine & Trail Particle Visuals
+            // Particle Trail & Engine Visuals
             engineSize = 2.2f;
             engineOffset = 4f;
             engineColor = Color.valueOf("c084fc");
             
             trailLength = 12;
             trailColor = Color.valueOf("a855f7");
-            
             outlineColor = Color.valueOf("2a1645");
         }};
     }
