@@ -11,7 +11,7 @@ public class KVRUnits {
     public static void load() {
         ping = new UnitType("ping") {{
             localizedName = "Ping";
-            description = "A friendly dimensional guide drone.";
+            description = "A curious observer drone from an advanced allied faction. Capable of interdimensional phase-warping across planets to study new technologies.";
             
             // Link Companion Follow AI
             aiController = CompanionAI::new;
