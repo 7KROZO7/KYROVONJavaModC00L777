@@ -12,26 +12,52 @@ public class KVREffects {
     public static Effect warpRift;
 
     public static void load() {
-        warpRift = new Effect(50f, e -> {
-            // Dimensional Colors
-            Color darkPurple = Color.valueOf("2a1645");
-            Color riftViolet = Color.valueOf("7a3fd2");
-            Color glowLilac = Color.valueOf("c084fc");
-            Color cyanSpark = Color.valueOf("38bdf8");
+        warpRift = new Effect(55f, e -> {
+            Color darkVoid = Color.valueOf("13091f");
+            Color portalBase = Color.valueOf("7a3fd2");
+            Color neonLilac = Color.valueOf("c084fc");
+            Color sparkCyan = Color.valueOf("38bdf8");
 
-            // Outer expanding warp shockwave
-            Draw.color(riftViolet, glowLilac, e.fin());
+            // Portal scale: snappy pop-in and snap-out
+            float scale = Mathf.curve(e.fin(), 0f, 0.15f) * Mathf.curve(e.fout(), 0f, 0.15f);
+            float baseRadius = 24f * scale;
+
+            if (baseRadius <= 0.1f) return;
+
+            // 1. Swirling outer liquid border (Wavy fluid rim)
+            Draw.color(neonLilac, portalBase, e.fin());
             Lines.stroke(e.fout() * 3f);
-            Lines.circle(e.x, e.y, e.fin() * 28f);
+            int segments = 14;
+            for (int i = 0; i < segments; i++) {
+                float rot = e.fin() * 360f;
+                float a1 = (360f / segments) * i + rot;
+                float a2 = (360f / segments) * (i + 1) + rot;
 
-            // Collapsing inner core void
-            Draw.color(darkPurple);
-            Fill.circle(e.x, e.y, e.fout() * 12f);
+                float r1 = baseRadius + Mathf.sin(a1 * 3f + e.fin() * 20f) * (3.5f * scale);
+                float r2 = baseRadius + Mathf.sin(a2 * 3f + e.fin() * 20f) * (3.5f * scale);
 
-            // Swirling rift sparks
-            Draw.color(cyanSpark);
-            Angles.randLenVectors(e.id, 8, e.fin() * 22f, (x, y) -> {
-                Fill.circle(e.x + x, e.y + y, e.fout() * 2f);
+                Lines.line(
+                    e.x + Angles.trnsx(a1, r1), e.y + Angles.trnsy(a1, r1),
+                    e.x + Angles.trnsx(a2, r2), e.y + Angles.trnsy(a2, r2)
+                );
+            }
+
+            // 2. Dark void core inside portal
+            Draw.color(darkVoid);
+            Fill.circle(e.x, e.y, baseRadius * 0.85f);
+
+            // 3. Inner spinning spiral vortex arms
+            Draw.color(portalBase, neonLilac, e.fout());
+            for (int i = 0; i < 3; i++) {
+                float spiralAngle = (i * 120f) + (e.fin() * 540f);
+                Lines.stroke(2f * e.fout());
+                Lines.arc(e.x, e.y, baseRadius * 0.55f, 0.3f, spiralAngle);
+            }
+
+            // 4. Liquid droplets & dimensional sparks spraying out
+            Draw.color(sparkCyan);
+            Angles.randLenVectors(e.id, 10, baseRadius * 1.5f, (x, y) -> {
+                Fill.circle(e.x + x, e.y + y, e.fout() * 2.2f);
             });
         });
     }
