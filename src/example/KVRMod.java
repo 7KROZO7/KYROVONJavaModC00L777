@@ -1,5 +1,6 @@
 package extra;
 
+import extra.content.KVRUnits;
 import mindustry.mod.Mod;
 
 public class KVRMod extends Mod {
@@ -10,11 +11,12 @@ public class KVRMod extends Mod {
 
     @Override
     public void loadContent() {
-        // Content loading logic goes here
+        // Load custom units
+        KVRUnits.load();
     }
 
     @Override
     public void init() {
-        // Initialization logic goes here
+        // Post-init logic
     }
 }
