@@ -1,17 +1,17 @@
 package extra;
 
 import arc.Events;
-import arc.util.Time;
 import extra.content.KVREffects;
 import extra.content.KVRUnits;
-import mindustry.game.EventType;
+import mindustry.Vars;
+import mindustry.game.EventType.Trigger;
 import mindustry.gen.Groups;
+import mindustry.gen.Unit;
 import mindustry.mod.Mod;
 
 public class KVRMod extends Mod {
 
     public KVRMod() {
-        // Constructor
     }
 
     @Override
@@ -22,27 +22,24 @@ public class KVRMod extends Mod {
 
     @Override
     public void init() {
-        // Triggers the exact moment the player enters/controls their unit
-        Events.on(EventType.UnitControlEvent.class, event -> {
-            if (event.player == null || event.unit == null) return;
+        // Runs every frame with zero overhead (instant spawn detection)
+        Events.run(Trigger.update, () -> {
+            if (!Vars.state.isPlaying() || Vars.player == null) return;
 
-            Time.runTask(45f, () -> { // Brief delay after controlling unit
-                if (event.unit != null && event.unit.isValid()) {
-                    // Check if Ping is already on this team
-                    boolean pingExists = Groups.unit.contains(u -> u.type == KVRUnits.ping && u.team == event.player.team());
+            Unit playerUnit = Vars.player.unit();
+            if (playerUnit == null || !playerUnit.isValid() || playerUnit.dead) return;
 
-                    if (!pingExists) {
-                        float spawnX = event.unit.x + 24f;
-                        float spawnY = event.unit.y + 24f;
+            // Find existing Ping for player's team
+            Unit ping = Groups.unit.find(u -> u.type == KVRUnits.ping && u.team == Vars.player.team());
 
-                        // Play Warp Rift animation
-                        KVREffects.warpRift.at(spawnX, spawnY);
+            // If Ping is missing or destroyed, warp him in
+            if (ping == null || !ping.isValid() || ping.dead) {
+                float sx = playerUnit.x + 24f;
+                float sy = playerUnit.y + 24f;
 
-                        // Spawn Ping
-                        KVRUnits.ping.spawn(event.player.team(), spawnX, spawnY);
-                    }
-                }
-            });
+                KVREffects.warpRift.at(sx, sy);
+                KVRUnits.ping.spawn(Vars.player.team(), sx, sy);
+            }
         });
     }
 }
