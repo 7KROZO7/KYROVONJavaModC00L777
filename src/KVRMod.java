@@ -22,23 +22,25 @@ public class KVRMod extends Mod {
 
     @Override
     public void init() {
-        // Triggers the exact moment the player touches down
-        Events.on(EventType.PlayerSpawnEvent.class, event -> {
-            if (event.player == null || event.player.unit() == null) return;
+        // Triggers the exact moment the player enters/controls their unit
+        Events.on(EventType.UnitControlEvent.class, event -> {
+            if (event.player == null || event.unit == null) return;
 
-            Time.runTask(30f, () -> { // Brief 0.5s pause after touchdown
-                // Check if Ping already exists for this team
-                boolean pingExists = Groups.unit.contains(u -> u.type == KVRUnits.ping && u.team == event.player.team());
+            Time.runTask(45f, () -> { // Brief delay after controlling unit
+                if (event.unit != null && event.unit.isValid()) {
+                    // Check if Ping is already on this team
+                    boolean pingExists = Groups.unit.contains(u -> u.type == KVRUnits.ping && u.team == event.player.team());
 
-                if (!pingExists && event.player.unit() != null) {
-                    float spawnX = event.player.x + 24f;
-                    float spawnY = event.player.y + 24f;
+                    if (!pingExists) {
+                        float spawnX = event.unit.x + 24f;
+                        float spawnY = event.unit.y + 24f;
 
-                    // Play Warp-in Effect
-                    KVREffects.warpRift.at(spawnX, spawnY);
+                        // Play Warp Rift animation
+                        KVREffects.warpRift.at(spawnX, spawnY);
 
-                    // Spawn Ping
-                    KVRUnits.ping.spawn(event.player.team(), spawnX, spawnY);
+                        // Spawn Ping
+                        KVRUnits.ping.spawn(event.player.team(), spawnX, spawnY);
+                    }
                 }
             });
         });
