@@ -1,9 +1,9 @@
 {
     "name": "krv",
-    "displayName": "[#2a1645]◄[#c084fc] Kyrovon [#2a1645]►[]",
-    "description": "[#c084fc]Kyrovon![]\n[#bf92f9]A fractured dimensional planet where warp rifts and phase anomalies are common across the world.[]\n\n[#7a3fd2]Status: [#a080ff]Early Development[]\n[#c084fc]((STAY TUNED!))[]",
-    "subtitle": "[#a080ff]Fractured Dimensional World[]",
-    "author": "[#a080ff]((KROZO))[]",
+    "displayName": "[#7a3fd2[]]◄[#c084fc[]]Kyrovon[#7a3fd2[]]►[]",
+    "description": "[#c084fc[]]Kyrovon![]\n[#bf92f9[]]A fractured dimensional planet where warp rifts and phase anomalies are common across the world.[]\n\n[#7a3fd2[]]Status: [#a080ff[]]Early Development[]\n[#c084fc[]]((STAY TUNED!))[]",
+    "subtitle": "[#a080ff[]]Fractured Dimensional World[]",
+    "author": "[#a080ff[]]((KROZO))[]",
     "version": "1.0.0",
     "minGameVersion": "159.7",
     "java": true,
