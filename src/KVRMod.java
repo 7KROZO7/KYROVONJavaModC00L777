@@ -24,6 +24,7 @@ public class KVRMod extends Mod {
 
     @Override
     public void init() {
+        // Build the draggable HUD grip & button
         PingHUDWidget.build();
 
         Events.run(Trigger.update, () -> {
@@ -34,6 +35,7 @@ public class KVRMod extends Mod {
 
             Unit ping = Groups.unit.find(u -> u.type == KVRUnits.ping && u.team == Vars.player.team());
 
+            // Auto-spawn Ping through a rift on spawn/drop
             if (ping == null || !ping.isValid() || ping.dead) {
                 float sx = playerUnit.x + 24f;
                 float sy = playerUnit.y + 24f;
@@ -45,7 +47,7 @@ public class KVRMod extends Mod {
                     newPing.elevation = 1f;
                     newPing.add();
 
-                    // Play arrival greeting
+                    // Play in-world arrival greeting
                     PingBubbleUI.showGreeting(newPing);
                 }
             }
