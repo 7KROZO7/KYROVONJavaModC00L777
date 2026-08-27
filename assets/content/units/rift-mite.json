@@ -1,6 +1,6 @@
 {
   "type": "unit",
-  "localizedName": "Rift Mite",
+  "displayName": "Rift Mite",
   "description": "A short-lived interdimensional mining drone.",
   "flying": true,
   "hovering": true,
