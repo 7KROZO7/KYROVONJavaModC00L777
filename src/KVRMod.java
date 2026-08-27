@@ -5,6 +5,7 @@ import arc.Events;
 import extra.content.KVREffects;
 import extra.content.KVRUnits;
 import extra.ui.PingBubbleUI;
+import extra.ui.PingHUDWidget;
 import mindustry.Vars;
 import mindustry.game.EventType.Trigger;
 import mindustry.gen.Groups;
@@ -24,6 +25,9 @@ public class KVRMod extends Mod {
 
     @Override
     public void init() {
+        // Initialize the Draggable HUD Widget
+        PingHUDWidget.build();
+
         Events.run(Trigger.update, () -> {
             if (!Vars.state.isPlaying() || Vars.player == null) return;
 
@@ -37,14 +41,19 @@ public class KVRMod extends Mod {
                 float sy = playerUnit.y + 24f;
 
                 KVREffects.warpRift.at(sx, sy);
-                KVRUnits.ping.spawn(Vars.player.team(), sx, sy);
+                Unit newPing = KVRUnits.ping.create(Vars.player.team());
+                if (newPing != null) {
+                    newPing.set(sx, sy);
+                    newPing.elevation = 1f;
+                    newPing.add();
 
-                // Sector Memory Greeting
-                String sectorKey = Vars.state.rules.sector != null ? "krv-visited-" + Vars.state.rules.sector.id : "krv-sandbox";
-                boolean isReturn = Core.settings.getBool(sectorKey, false);
-                Core.settings.put(sectorKey, true);
+                    // Trigger in-world auto greeting
+                    String sectorKey = Vars.state.rules.sector != null ? "krv-visited-" + Vars.state.rules.sector.id : "krv-sandbox";
+                    boolean isReturn = Core.settings.getBool(sectorKey, false);
+                    Core.settings.put(sectorKey, true);
 
-                PingBubbleUI.showGreeting(isReturn, sx, sy);
+                    PingBubbleUI.showGreeting(newPing, isReturn);
+                }
             }
         });
     }
