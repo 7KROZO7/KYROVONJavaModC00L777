@@ -17,7 +17,7 @@ public class PingBubbleUI {
     private static Table bubbleTable;
     private static Unit targetPing;
     private static float lastSpawnTime = -3600f;
-    private static final float COOLDOWN = 3600f; // 60 seconds (3600 ticks)
+    private static final float COOLDOWN = 3600f; // 60 seconds
     private static final Vec2 screenCoords = new Vec2();
 
     public static void showGreeting(boolean isReturn, float x, float y) {
@@ -29,7 +29,9 @@ public class PingBubbleUI {
     }
 
     public static void show(Unit pingUnit) {
+        if (pingUnit == null || !pingUnit.isValid()) return;
         targetPing = pingUnit;
+
         if (bubbleTable == null) {
             bubbleTable = new Table();
             Vars.ui.hudGroup.addChild(bubbleTable);
@@ -55,33 +57,44 @@ public class PingBubbleUI {
                     .style(mindustry.ui.Styles.outlineLabel).padBottom(6f).row();
 
                 t.button("⚡ Spawn Mites", () -> {
-                    lastSpawnTime = Time.time;
-                    hide();
+                    // Capture positions safely before hiding or modifying state
+                    if (targetPing != null && targetPing.isValid()) {
+                        float px = targetPing.x;
+                        float py = targetPing.y;
+                        
+                        lastSpawnTime = Time.time;
+                        hide();
 
-                    for (int i = 0; i < 3; i++) {
-                        float offsetX = (i - 1) * 16f;
-                        float sx = targetPing.x + offsetX;
-                        float sy = targetPing.y - 12f;
+                        for (int i = 0; i < 3; i++) {
+                            float offsetX = (i - 1) * 16f;
+                            float sx = px + offsetX;
+                            float sy = py - 12f;
 
-                        KVREffects.warpRift.at(sx, sy);
-                        KVRUnits.riftMite.spawn(Vars.player.team(), sx, sy);
+                            KVREffects.warpRift.at(sx, sy);
+                            KVRUnits.riftMite.spawn(Vars.player.team(), sx, sy);
+                        }
+                    } else {
+                        hide();
                     }
                 }).size(180f, 36f).row();
             }
 
-            t.button("✖", PingBubbleUI::hide).size(28f, 28f).padTop(4f);
+            // Close button: cleanly dismisses the bubble
+            t.button("✖", PingBubbleUI::hide).size(36f, 36f).padTop(4f);
         });
 
         updatePosition();
     }
 
     public static void updatePosition() {
-        if (bubbleTable == null || !bubbleTable.visible || targetPing == null || !targetPing.isValid()) {
+        if (bubbleTable == null || !bubbleTable.visible) return;
+
+        if (targetPing == null || !targetPing.isValid()) {
             hide();
             return;
         }
 
-        // Convert world coords to 2D screen pixels
+        // Convert world position to 2D screen pixels
         Core.camera.project(screenCoords.set(targetPing.x, targetPing.y + 18f));
         bubbleTable.setPosition(screenCoords.x, screenCoords.y, Align.bottom);
     }
