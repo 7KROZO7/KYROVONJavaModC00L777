@@ -18,14 +18,14 @@ public class CompanionAI extends AIController {
     public void updateMovement() {
         Player player = Vars.player;
 
-        // 30-Second Lifespan: 150 HP / 1800 ticks = ~0.0833 HP per tick
+        // 30-Second Lifespan: 150 HP / 1800 ticks
         Groups.unit.each(u -> u.type == KVRUnits.riftMite, u -> {
             u.health -= (150f / (30f * 60f)) * Time.delta;
 
-            // When time expires: Play exit rift and destroy cleanly
+            // Clean warp return to home dimension
             if (u.health <= 0) {
                 KVREffects.warpRift.at(u.x, u.y);
-                u.remove();
+                u.remove(); // Vanishes cleanly without wreckage
             }
         });
 
