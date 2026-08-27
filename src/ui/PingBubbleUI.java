@@ -8,10 +8,10 @@ import arc.scene.ui.layout.Table;
 import arc.util.Align;
 import arc.util.Time;
 import extra.content.KVREffects;
-import extra.content.KVRUnits;
 import mindustry.Vars;
 import mindustry.gen.Tex;
 import mindustry.gen.Unit;
+import mindustry.type.UnitType;
 
 public class PingBubbleUI {
     private static Table bubbleTable;
@@ -59,7 +59,7 @@ public class PingBubbleUI {
             main.touchable = Touchable.enabled;
             main.margin(10f);
 
-            // Header
+            // Header (Dialogue + [✖] Close Button)
             main.table(header -> {
                 if (remainingTicks > 0) {
                     header.add("[#c084fc]Ping:[] *Whirr!* Subspace cooling down!\n[#ff79c6]Wait " + remainingSeconds + "s before tearing another rift.[]")
@@ -85,15 +85,18 @@ public class PingBubbleUI {
                         lastSpawnTime = Time.time;
                         hide();
 
-                        // Guaranteed Direct Spawn via Java Reference
-                        if (KVRUnits.riftMite != null) {
+                        // Case-insensitive lookup for JSON unit
+                        UnitType miteType = Vars.content.units().find(u -> u != null && u.name != null && u.name.toLowerCase().endsWith("rift-mite"));
+
+                        if (miteType != null) {
                             for (int i = 0; i < 3; i++) {
                                 float sx = px + (i - 1) * 16f;
                                 float sy = py - 14f;
 
                                 KVREffects.warpRift.at(sx, sy);
 
-                                Unit mite = KVRUnits.riftMite.spawn(Vars.player.team(), sx, sy);
+                                // Spawns airborne to prevent floor stuck bug
+                                Unit mite = miteType.spawn(Vars.player.team(), sx, sy);
                                 if (mite != null) {
                                     mite.elevation = 1f;
                                 }
