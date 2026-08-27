@@ -1,8 +1,10 @@
 package extra.content;
 
 import arc.graphics.Color;
+import arc.struct.Seq;
 import extra.ai.CompanionAI;
-import extra.ai.RiftMiteAI;
+import mindustry.ai.types.MinerAI;
+import mindustry.content.Items;
 import mindustry.gen.UnitEntity;
 import mindustry.type.UnitType;
 
@@ -15,7 +17,7 @@ public class KVRUnits {
         ping = new UnitType("ping") {{
             localizedName = "Ping";
             description = "A friendly dimensional observer drone.";
-            aiController = CompanionAI::new;
+            controller = u -> new CompanionAI();
             constructor = UnitEntity::create;
 
             flying = true;
@@ -46,22 +48,30 @@ public class KVRUnits {
         riftMite = new UnitType("rift-mite") {{
             localizedName = "Rift Mite";
             description = "A short-lived interdimensional mining drone.";
-            aiController = RiftMiteAI::new;
+            controller = u -> new MinerAI();
+            defaultController = MinerAI::new;
             constructor = UnitEntity::create;
 
             flying = true;
             drag = 0.06f;
             accel = 0.15f;
-            speed = 2.8f;
+            speed = 2.6f;
             hitSize = 6f;
             health = 150f;
             itemCapacity = 20;
 
+            // Engine-native mining properties
+            mineTier = 3;
+            mineSpeed = 4.5f;
+            mineRange = 70f;
             mineFloor = true;
             mineWalls = true;
-            mineTier = 2;
-            mineSpeed = 8.0f;
-            mineRange = 70f;
+
+            // Targetable ores
+            mineItems = Seq.with(
+                Items.copper, Items.lead, Items.coal, Items.titanium,
+                Items.scrap, Items.sand, Items.beryllium, Items.tungsten
+            );
 
             targetable = false;
             hittable = false;
