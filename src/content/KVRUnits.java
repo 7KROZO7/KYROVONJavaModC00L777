@@ -1,10 +1,8 @@
 package extra.content;
 
 import arc.graphics.Color;
-import arc.struct.Seq;
 import extra.ai.CompanionAI;
-import mindustry.ai.types.MinerAI;
-import mindustry.content.Items;
+import extra.ai.RiftMiteAI;
 import mindustry.gen.UnitEntity;
 import mindustry.type.UnitType;
 
@@ -48,7 +46,7 @@ public class KVRUnits {
         riftMite = new UnitType("rift-mite") {{
             localizedName = "Rift Mite";
             description = "A short-lived interdimensional mining drone.";
-            controller = u -> new MinerAI();
+            aiController = RiftMiteAI::new;
             constructor = UnitEntity::create;
 
             flying = true;
@@ -56,21 +54,14 @@ public class KVRUnits {
             accel = 0.15f;
             speed = 2.8f;
             hitSize = 6f;
-            health = 150f; // 150 HP / 5 HP per sec = 30-second lifespan
+            health = 150f;
             itemCapacity = 20;
 
-            // Ore extraction parameters
             mineFloor = true;
             mineWalls = true;
             mineTier = 2;
-            mineSpeed = 6.5f;
-            mineRange = 60f;
-
-            // Targetable ores for Serpulo/Erekir & Kyrovon fallback
-            mineItems = Seq.with(
-                Items.copper, Items.lead, Items.coal, Items.titanium,
-                Items.beryllium, Items.graphite
-            );
+            mineSpeed = 8.0f;
+            mineRange = 70f;
 
             targetable = false;
             hittable = false;
