@@ -8,10 +8,10 @@ import arc.scene.ui.layout.Table;
 import arc.util.Align;
 import arc.util.Time;
 import extra.content.KVREffects;
-import extra.content.KVRUnits;
 import mindustry.Vars;
 import mindustry.gen.Tex;
 import mindustry.gen.Unit;
+import mindustry.type.UnitType;
 
 public class PingBubbleUI {
     private static Table bubbleTable;
@@ -25,7 +25,6 @@ public class PingBubbleUI {
         return bubbleTable != null && bubbleTable.visible && targetPing != null;
     }
 
-    // Clean Arrival Greeting (auto-dismisses after 5s)
     public static void showGreeting(Unit pingUnit) {
         if (pingUnit == null || !pingUnit.isValid()) return;
         targetPing = pingUnit;
@@ -40,11 +39,10 @@ public class PingBubbleUI {
                 .style(mindustry.ui.Styles.outlineLabel).left();
         });
 
-        autoDismissTime = Time.time + 300f; // 5 seconds
+        autoDismissTime = Time.time + 300f;
         updatePosition();
     }
 
-    // Manual Interaction
     public static void show(Unit pingUnit) {
         if (pingUnit == null || !pingUnit.isValid()) return;
         targetPing = pingUnit;
@@ -87,18 +85,23 @@ public class PingBubbleUI {
                         lastSpawnTime = Time.time;
                         hide();
 
-                        for (int i = 0; i < 3; i++) {
-                            float sx = px + (i - 1) * 16f;
-                            float sy = py - 14f;
+                        // Grab the JSON-defined Rift Mite
+                        UnitType miteType = Vars.content.unit("krv-rift-mite");
+                        if (miteType == null) miteType = Vars.content.unit("rift-mite");
 
-                            KVREffects.warpRift.at(sx, sy);
+                        if (miteType != null) {
+                            for (int i = 0; i < 3; i++) {
+                                float sx = px + (i - 1) * 16f;
+                                float sy = py - 14f;
 
-                            Unit mite = KVRUnits.riftMite.create(Vars.player.team());
-                            if (mite != null) {
-                                mite.set(sx, sy);
-                                mite.health = KVRUnits.riftMite.health;
-                                mite.elevation = 1f;
-                                mite.add();
+                                KVREffects.warpRift.at(sx, sy);
+
+                                Unit mite = miteType.create(Vars.player.team());
+                                if (mite != null) {
+                                    mite.set(sx, sy);
+                                    mite.elevation = 1f;
+                                    mite.add();
+                                }
                             }
                         }
                     } else {
