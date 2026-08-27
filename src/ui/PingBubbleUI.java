@@ -1,10 +1,9 @@
 package extra.ui;
 
 import arc.Core;
-import arc.graphics.Color;
-import arc.math.geom.Vec3;
-import arc.scene.ui.Table;
+import arc.math.geom.Vec2;
 import arc.scene.ui.TextButton;
+import arc.scene.ui.layout.Table;
 import arc.util.Align;
 import arc.util.Time;
 import extra.content.KVREffects;
@@ -18,8 +17,16 @@ public class PingBubbleUI {
     private static Table bubbleTable;
     private static Unit targetPing;
     private static float lastSpawnTime = -3600f;
-    private static final float COOLDOWN = 3600f; // 60 seconds (60 * 60 ticks)
-    private static final Vec3 screenCoords = new Vec3();
+    private static final float COOLDOWN = 3600f; // 60 seconds (3600 ticks)
+    private static final Vec2 screenCoords = new Vec2();
+
+    public static void showGreeting(boolean isReturn, float x, float y) {
+        String msg = isReturn
+            ? "[#c084fc]Ping:[] *Warp-flux stabilized!* Welcome back, ally! Did the timeline behave while away?"
+            : "[#c084fc]Ping:[] *Bzz-wip!* Hello there, fellow ally! Dimensional link calibrated and ready!";
+        
+        Call.label(msg, 5f, x, y + 16f);
+    }
 
     public static void show(Unit pingUnit) {
         targetPing = pingUnit;
@@ -74,8 +81,8 @@ public class PingBubbleUI {
             return;
         }
 
-        // Convert in-game world position to screen pixel coordinates
-        Core.camera.project(screenCoords.set(targetPing.x, targetPing.y + 16f, 0));
+        // Convert world coords to 2D screen pixels
+        Core.camera.project(screenCoords.set(targetPing.x, targetPing.y + 18f));
         bubbleTable.setPosition(screenCoords.x, screenCoords.y, Align.bottom);
     }
 
