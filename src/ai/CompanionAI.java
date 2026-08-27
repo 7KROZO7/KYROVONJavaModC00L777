@@ -1,6 +1,5 @@
 package extra.ai;
 
-import arc.Core;
 import arc.math.geom.Vec2;
 import arc.util.Time;
 import extra.content.KVREffects;
@@ -19,20 +18,20 @@ public class CompanionAI extends AIController {
     public void updateMovement() {
         Player player = Vars.player;
 
-        // Process 30-second HP decay on active Rift Mites (5 HP per sec)
+        // Process 30-second HP decay on active Rift Mites
         Groups.unit.each(u -> u.type == KVRUnits.riftMite, u -> {
             u.health -= 5f * (Time.delta / 60f);
             if (u.health <= 0) u.kill();
         });
 
-        // Update active speech bubble position above Ping
+        // Update active speech bubble
         PingBubbleUI.updatePosition();
 
         if (player != null && player.unit() != null && player.unit().isValid() && player.team() == unit.team) {
             Unit target = player.unit();
             float distance = unit.dst(target);
 
-            // Warp if distant / respawned
+            // Warp if distant or respawned
             if (distance > 220f) {
                 KVREffects.warpRift.at(unit.x, unit.y);
                 unit.set(target.x + 20f, target.y + 20f);
@@ -43,14 +42,6 @@ public class CompanionAI extends AIController {
             }
 
             unit.lookAt(target.x, target.y);
-
-            // Tap / Click detection on Ping (PC & Mobile)
-            if (Core.input.justTouched()) {
-                Vec2 touchWorld = Core.camera.unproject(Core.input.mouse());
-                if (unit.dst(touchWorld.x, touchWorld.y) < 24f) {
-                    PingBubbleUI.show(unit);
-                }
-            }
         }
     }
 }
