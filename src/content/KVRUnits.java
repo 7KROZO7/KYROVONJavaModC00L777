@@ -10,7 +10,7 @@ public class KVRUnits {
 
     public static void load() {
         ping = new UnitType("ping") {{
-            displayName = "Ping";
+            localizedName = "Ping"; // Correct Java field name
             description = "A friendly dimensional observer drone.";
             controller = u -> new CompanionAI();
             constructor = UnitEntity::create;
