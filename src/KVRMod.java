@@ -4,7 +4,7 @@ import arc.Core;
 import arc.Events;
 import extra.content.KVREffects;
 import extra.content.KVRUnits;
-import extra.ui.PingDialog;
+import extra.ui.PingBubbleUI;
 import mindustry.Vars;
 import mindustry.game.EventType.Trigger;
 import mindustry.gen.Groups;
@@ -12,6 +12,9 @@ import mindustry.gen.Unit;
 import mindustry.mod.Mod;
 
 public class KVRMod extends Mod {
+
+    public KVRMod() {
+    }
 
     @Override
     public void loadContent() {
@@ -34,14 +37,14 @@ public class KVRMod extends Mod {
                 float sy = playerUnit.y + 24f;
 
                 KVREffects.warpRift.at(sx, sy);
-                Unit newPing = KVRUnits.ping.spawn(Vars.player.team(), sx, sy);
+                KVRUnits.ping.spawn(Vars.player.team(), sx, sy);
 
-                // Sector Visit Memory Greeting
+                // Sector Memory Greeting
                 String sectorKey = Vars.state.rules.sector != null ? "krv-visited-" + Vars.state.rules.sector.id : "krv-sandbox";
                 boolean isReturn = Core.settings.getBool(sectorKey, false);
                 Core.settings.put(sectorKey, true);
 
-                PingDialog.showGreeting(isReturn, sx, sy);
+                PingBubbleUI.showGreeting(isReturn, sx, sy);
             }
         });
     }
