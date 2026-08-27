@@ -18,13 +18,18 @@ public class CompanionAI extends AIController {
     public void updateMovement() {
         Player player = Vars.player;
 
-        // Process 30-second HP decay on active Rift Mites
+        // 30-Second Lifespan: 150 HP / 1800 ticks = ~0.0833 HP per tick
         Groups.unit.each(u -> u.type == KVRUnits.riftMite, u -> {
-            u.health -= 5f * (Time.delta / 60f);
-            if (u.health <= 0) u.kill();
+            u.health -= (150f / (30f * 60f)) * Time.delta;
+
+            // When time expires: Play exit rift and destroy cleanly
+            if (u.health <= 0) {
+                KVREffects.warpRift.at(u.x, u.y);
+                u.remove();
+            }
         });
 
-        // Update active speech bubble
+        // Update speech bubble position
         PingBubbleUI.updatePosition();
 
         if (player != null && player.unit() != null && player.unit().isValid() && player.team() == unit.team) {
