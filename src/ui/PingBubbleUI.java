@@ -17,7 +17,7 @@ public class PingBubbleUI {
     private static Table bubbleTable;
     private static Unit targetPing;
     private static float lastSpawnTime = -3600f;
-    private static final float COOLDOWN = 3600f; // 60 seconds
+    private static final float COOLDOWN = 3600f; // 60 seconds (3600 ticks)
     private static final Vec2 screenCoords = new Vec2();
 
     public static void showGreeting(boolean isReturn, float x, float y) {
@@ -43,25 +43,33 @@ public class PingBubbleUI {
         float remainingTicks = (lastSpawnTime + COOLDOWN) - Time.time;
         int remainingSeconds = (int) Math.ceil(remainingTicks / 60f);
 
-        bubbleTable.table(Tex.pane, t -> {
-            t.margin(10f);
+        bubbleTable.table(Tex.pane, main -> {
+            main.margin(8f);
 
+            // --- TOP HEADER ROW (Dialogue + Side [✖] Button) ---
+            main.table(header -> {
+                if (remainingTicks > 0) {
+                    header.add("[#c084fc]Ping:[] *Whirr!* Subspace cooling down!\n[#ff79c6]Wait " + remainingSeconds + "s before tearing another rift.[]")
+                        .style(mindustry.ui.Styles.outlineLabel).left().padRight(8f);
+                } else {
+                    header.add("[#c084fc]Ping:[] What is it, ally?\nReady to siphon mining mites?")
+                        .style(mindustry.ui.Styles.outlineLabel).left().padRight(8f);
+                }
+
+                // Close Button aligned on the right side of header
+                header.button("✖", PingBubbleUI::hide).size(30f, 30f).right();
+            }).growX().padBottom(6f).row();
+
+            // --- ACTION BUTTON ROW ---
             if (remainingTicks > 0) {
-                t.add("[#c084fc]Ping:[] *Whirr!* Subspace siphon cooling down!\n[#ff79c6]Wait " + remainingSeconds + "s before tearing another rift.[]")
-                    .style(mindustry.ui.Styles.outlineLabel).padBottom(6f).row();
-
-                TextButton btn = t.button("⏳ Recharging (" + remainingSeconds + "s)", () -> {}).size(180f, 36f).get();
+                TextButton btn = main.button("⏳ Recharging (" + remainingSeconds + "s)", () -> {}).size(220f, 36f).get();
                 btn.setDisabled(true);
             } else {
-                t.add("[#c084fc]Ping:[] What is it, ally? Ready to siphon some mining mites?")
-                    .style(mindustry.ui.Styles.outlineLabel).padBottom(6f).row();
-
-                t.button("⚡ Spawn Mites", () -> {
-                    // Capture positions safely before hiding or modifying state
+                main.button("⚡ Spawn Mites", () -> {
                     if (targetPing != null && targetPing.isValid()) {
                         float px = targetPing.x;
                         float py = targetPing.y;
-                        
+
                         lastSpawnTime = Time.time;
                         hide();
 
@@ -71,16 +79,14 @@ public class PingBubbleUI {
                             float sy = py - 12f;
 
                             KVREffects.warpRift.at(sx, sy);
-                            KVRUnits.riftMite.spawn(Vars.player.team(), sx, sy);
+                            Unit mite = KVRUnits.riftMite.spawn(Vars.player.team(), sx, sy);
+                            if (mite != null) mite.elevation = 1f; // Trigger instant hover bobbing
                         }
                     } else {
                         hide();
                     }
-                }).size(180f, 36f).row();
+                }).size(220f, 36f);
             }
-
-            // Close button: cleanly dismisses the bubble
-            t.button("✖", PingBubbleUI::hide).size(36f, 36f).padTop(4f);
         });
 
         updatePosition();
@@ -94,8 +100,7 @@ public class PingBubbleUI {
             return;
         }
 
-        // Convert world position to 2D screen pixels
-        Core.camera.project(screenCoords.set(targetPing.x, targetPing.y + 18f));
+        Core.camera.project(screenCoords.set(targetPing.x, targetPing.y + 20f));
         bubbleTable.setPosition(screenCoords.x, screenCoords.y, Align.bottom);
     }
 
