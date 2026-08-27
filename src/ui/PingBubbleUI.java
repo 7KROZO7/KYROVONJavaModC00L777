@@ -85,9 +85,8 @@ public class PingBubbleUI {
                         lastSpawnTime = Time.time;
                         hide();
 
-                        // Grab the JSON-defined Rift Mite
-                        UnitType miteType = Vars.content.unit("krv-rift-mite");
-                        if (miteType == null) miteType = Vars.content.unit("rift-mite");
+                        // Case-insensitive lookup (works with krv-rift-mite, KRV-rift-mite, or rift-mite)
+                        UnitType miteType = Vars.content.units().find(u -> u != null && u.name != null && u.name.toLowerCase().endsWith("rift-mite"));
 
                         if (miteType != null) {
                             for (int i = 0; i < 3; i++) {
@@ -96,11 +95,10 @@ public class PingBubbleUI {
 
                                 KVREffects.warpRift.at(sx, sy);
 
-                                Unit mite = miteType.create(Vars.player.team());
+                                // Direct native engine spawn
+                                Unit mite = miteType.spawn(Vars.player.team(), sx, sy);
                                 if (mite != null) {
-                                    mite.set(sx, sy);
                                     mite.elevation = 1f;
-                                    mite.add();
                                 }
                             }
                         }
