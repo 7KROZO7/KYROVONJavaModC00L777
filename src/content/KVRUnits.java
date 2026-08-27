@@ -1,8 +1,10 @@
 package extra.content;
 
 import arc.graphics.Color;
+import arc.struct.Seq;
 import extra.ai.CompanionAI;
 import mindustry.ai.types.MinerAI;
+import mindustry.content.Items;
 import mindustry.gen.UnitEntity;
 import mindustry.type.UnitType;
 
@@ -11,7 +13,7 @@ public class KVRUnits {
     public static UnitType riftMite;
 
     public static void load() {
-        // --- PING (Companion Guide) ---
+        // --- PING ---
         ping = new UnitType("ping") {{
             localizedName = "Ping";
             description = "A friendly dimensional observer drone.";
@@ -42,7 +44,7 @@ public class KVRUnits {
             outlineColor = Color.valueOf("2a1645");
         }};
 
-        // --- RIFT MITE (30-Second Mining Drone) ---
+        // --- RIFT MITE ---
         riftMite = new UnitType("rift-mite") {{
             localizedName = "Rift Mite";
             description = "A short-lived interdimensional mining drone.";
@@ -52,13 +54,23 @@ public class KVRUnits {
             flying = true;
             drag = 0.06f;
             accel = 0.15f;
-            speed = 2.4f;
+            speed = 2.8f;
             hitSize = 6f;
-            health = 150f; // 150 HP / 5 HP per sec = Exactly 30 seconds lifespan
+            health = 150f; // 150 HP / 5 HP per sec = 30-second lifespan
             itemCapacity = 20;
 
-            mineTier = 2;   // Mines Bismuth, Coltan, Shungite, Fulgurite
+            // Ore extraction parameters
+            mineFloor = true;
+            mineWalls = true;
+            mineTier = 2;
             mineSpeed = 6.5f;
+            mineRange = 60f;
+
+            // Targetable ores for Serpulo/Erekir & Kyrovon fallback
+            mineItems = Seq.with(
+                Items.copper, Items.lead, Items.coal, Items.titanium,
+                Items.beryllium, Items.graphite
+            );
 
             targetable = false;
             hittable = false;
