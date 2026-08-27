@@ -25,7 +25,7 @@ public class KVRMod extends Mod {
 
     @Override
     public void init() {
-        // Initialize the Draggable HUD Widget
+        // Build the draggable HUD button on launch
         PingHUDWidget.build();
 
         Events.run(Trigger.update, () -> {
@@ -47,11 +47,12 @@ public class KVRMod extends Mod {
                     newPing.elevation = 1f;
                     newPing.add();
 
-                    // Trigger in-world auto greeting
+                    // Sector memory tracking
                     String sectorKey = Vars.state.rules.sector != null ? "krv-visited-" + Vars.state.rules.sector.id : "krv-sandbox";
                     boolean isReturn = Core.settings.getBool(sectorKey, false);
                     Core.settings.put(sectorKey, true);
 
+                    // Pass (Unit, boolean)
                     PingBubbleUI.showGreeting(newPing, isReturn);
                 }
             }
