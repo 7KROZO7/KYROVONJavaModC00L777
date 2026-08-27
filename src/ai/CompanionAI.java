@@ -3,7 +3,6 @@ package extra.ai;
 import arc.math.geom.Vec2;
 import arc.util.Time;
 import extra.content.KVREffects;
-import extra.content.KVRUnits;
 import extra.ui.PingBubbleUI;
 import mindustry.Vars;
 import mindustry.entities.units.AIController;
@@ -18,14 +17,14 @@ public class CompanionAI extends AIController {
     public void updateMovement() {
         Player player = Vars.player;
 
-        // 30-Second Lifespan: 150 HP / 1800 ticks
-        Groups.unit.each(u -> u.type == KVRUnits.riftMite, u -> {
+        // 30-Second Lifespan for JSON Rift Mites
+        Groups.unit.each(u -> u.type != null && u.type.name != null && u.type.name.contains("rift-mite"), u -> {
             u.health -= (150f / (30f * 60f)) * Time.delta;
 
-            // Clean warp return to home dimension
+            // Return to home dimension via warp rift
             if (u.health <= 0) {
                 KVREffects.warpRift.at(u.x, u.y);
-                u.remove(); // Vanishes cleanly without wreckage
+                u.remove();
             }
         });
 
