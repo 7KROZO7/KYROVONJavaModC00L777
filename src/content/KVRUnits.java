@@ -17,7 +17,7 @@ public class KVRUnits {
         ping = new UnitType("ping") {{
             localizedName = "Ping";
             description = "A friendly dimensional observer drone.";
-            controller = u -> new CompanionAI();
+            aiController = CompanionAI::new; // Correct Java field
             constructor = UnitEntity::create;
 
             flying = true;
@@ -48,8 +48,7 @@ public class KVRUnits {
         riftMite = new UnitType("rift-mite") {{
             localizedName = "Rift Mite";
             description = "A short-lived interdimensional mining drone.";
-            controller = u -> new MinerAI();
-            defaultController = MinerAI::new;
+            aiController = MinerAI::new; // Correct Java field
             constructor = UnitEntity::create;
 
             flying = true;
@@ -60,7 +59,7 @@ public class KVRUnits {
             health = 150f;
             itemCapacity = 20;
 
-            // Engine-native mining properties
+            // Mining properties
             mineTier = 3;
             mineSpeed = 4.5f;
             mineRange = 70f;
