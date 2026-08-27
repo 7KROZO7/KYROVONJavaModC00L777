@@ -1,6 +1,5 @@
 package extra;
 
-import arc.Core;
 import arc.Events;
 import extra.content.KVREffects;
 import extra.content.KVRUnits;
@@ -25,7 +24,6 @@ public class KVRMod extends Mod {
 
     @Override
     public void init() {
-        // Build the draggable HUD button on launch
         PingHUDWidget.build();
 
         Events.run(Trigger.update, () -> {
@@ -47,13 +45,8 @@ public class KVRMod extends Mod {
                     newPing.elevation = 1f;
                     newPing.add();
 
-                    // Sector memory tracking
-                    String sectorKey = Vars.state.rules.sector != null ? "krv-visited-" + Vars.state.rules.sector.id : "krv-sandbox";
-                    boolean isReturn = Core.settings.getBool(sectorKey, false);
-                    Core.settings.put(sectorKey, true);
-
-                    // Pass (Unit, boolean)
-                    PingBubbleUI.showGreeting(newPing, isReturn);
+                    // Play arrival greeting
+                    PingBubbleUI.showGreeting(newPing);
                 }
             }
         });
