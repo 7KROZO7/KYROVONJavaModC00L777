@@ -2,9 +2,10 @@ package extra.ai;
 
 import arc.Core;
 import arc.math.geom.Vec2;
+import arc.util.Time;
 import extra.content.KVREffects;
 import extra.content.KVRUnits;
-import extra.ui.PingDialog;
+import extra.ui.PingBubbleUI;
 import mindustry.Vars;
 import mindustry.entities.units.AIController;
 import mindustry.gen.Groups;
@@ -18,11 +19,14 @@ public class CompanionAI extends AIController {
     public void updateMovement() {
         Player player = Vars.player;
 
-        // Process 30-second decay on all active Rift Mites (5 HP / sec = 0.0833 HP/tick)
+        // Process 30-second HP decay on active Rift Mites (5 HP per sec)
         Groups.unit.each(u -> u.type == KVRUnits.riftMite, u -> {
-            u.health -= 5f * (arc.util.Time.delta / 60f);
+            u.health -= 5f * (Time.delta / 60f);
             if (u.health <= 0) u.kill();
         });
+
+        // Update active speech bubble position above Ping
+        PingBubbleUI.updatePosition();
 
         if (player != null && player.unit() != null && player.unit().isValid() && player.team() == unit.team) {
             Unit target = player.unit();
@@ -43,8 +47,8 @@ public class CompanionAI extends AIController {
             // Tap / Click detection on Ping (PC & Mobile)
             if (Core.input.justTouched()) {
                 Vec2 touchWorld = Core.camera.unproject(Core.input.mouse());
-                if (unit.dst(touchWorld.x, touchWorld.y) < 22f) {
-                    PingDialog.openInteraction(unit);
+                if (unit.dst(touchWorld.x, touchWorld.y) < 24f) {
+                    PingBubbleUI.show(unit);
                 }
             }
         }
