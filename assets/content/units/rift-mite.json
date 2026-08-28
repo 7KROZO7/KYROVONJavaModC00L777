@@ -1,7 +1,7 @@
 {
   "type": "flying",
   "displayName": "Rift Mite",
-  "description": "A short-lived interdimensional mining drone.",
+  "description": "An intelligent interdimensional mining drone.",
   "defaultController": "MinerAI",
   "flying": true,
   "shadowElevation": 0.15,
