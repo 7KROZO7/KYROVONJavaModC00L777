@@ -1,91 +1,84 @@
 package extra.ai;
 
 import arc.math.Mathf;
+import arc.math.geom.Vec2;
 import arc.util.Time;
 import mindustry.Vars;
 import mindustry.content.Items;
 import mindustry.entities.units.AIController;
 import mindustry.gen.Building;
-import mindustry.gen.Call;
 import mindustry.gen.Player;
 import mindustry.type.Item;
 import mindustry.world.Tile;
 
 public class MiteAI extends AIController {
     private Tile targetTile;
-    private boolean delivering = false;
+    private static final Vec2 moveVec = new Vec2();
     private float scanTimer = 0f;
 
     @Override
     public void updateMovement() {
-        unit.elevation = 1f;
+        unit.elevation = 1f; // Force flight elevation
 
-        // Switch to Delivery mode when inventory is full
-        if (unit.stack.amount >= unit.type.itemCapacity) {
-            delivering = true;
-            unit.mineTile = null;
-        }
-
-        // Switch back to Mining mode when inventory is empty
-        if (unit.stack.amount <= 0) {
-            delivering = false;
-        }
-
-        // --- DELIVERY STATE ---
-        if (delivering) {
-            Building core = unit.closestCore();
-            Player player = Vars.player;
-
-            if (core != null) {
-                // Fly to Core
-                moveTo(core, 30f);
-                unit.lookAt(core);
-
-                if (unit.within(core, 45f)) {
-                    if (core.acceptStack(unit.stack.item, unit.stack.amount, unit) > 0) {
-                        int accepted = core.acceptStack(unit.stack.item, unit.stack.amount, unit);
-                        core.handleStack(unit.stack.item, accepted, unit);
-                        unit.stack.amount -= accepted;
-                    } else {
-                        unit.stack.amount = 0; // Storage fallback
-                    }
-                }
-            } else if (player != null && player.unit() != null) {
-                // Sandbox Fallback: Deliver directly to player
-                moveTo(player.unit(), 24f);
-                if (unit.within(player.unit(), 36f)) {
-                    player.unit().addItem(unit.stack.item, unit.stack.amount);
-                    unit.stack.amount = 0;
-                }
-            }
-            return;
-        }
-
-        // --- MINING STATE ---
-        // Scan for nearest ore once every 45 ticks (Prevents scanning lag)
+        // Scan for nearest ore every 30 ticks using world indexer
         scanTimer += Time.delta;
-        if (targetTile == null || targetTile.drop() == null || scanTimer >= 45f) {
+        if (targetTile == null || targetTile.drop() == null || scanTimer >= 30f) {
             scanTimer = 0f;
-            targetTile = findNearestOre();
+            targetTile = findClosestOreTile();
         }
 
         if (targetTile != null) {
-            moveTo(targetTile, unit.type.mineRange * 0.6f);
-            unit.lookAt(targetTile.worldx(), targetTile.worldy());
+            // Convert to true world pixel coordinates
+            float targetWorldX = targetTile.worldx();
+            float targetWorldY = targetTile.worldy();
+            float distance = unit.dst(targetWorldX, targetWorldY);
 
-            // Within laser range: Activate extraction
-            if (unit.within(targetTile.worldx(), targetTile.worldy(), unit.type.mineRange)) {
+            // Flying bobbing physics
+            float bob = Mathf.sin(Time.time + unit.id * 10f, 6f, 1.2f);
+
+            if (distance > 32f) {
+                // Fly to ore deposit using direct world vector
+                moveVec.set(targetWorldX - unit.x, (targetWorldY + bob) - unit.y).setLength(unit.speed());
+                unit.movePref(moveVec);
+                unit.lookAt(targetWorldX, targetWorldY);
+            } else {
+                // In range: Face tile and activate mining laser
+                unit.lookAt(targetWorldX, targetWorldY);
                 unit.mineTile = targetTile;
+
+                // Deliver payload to Core or Player inventory
+                if (unit.stack.amount > 0 && targetTile.drop() != null) {
+                    Building core = unit.closestCore();
+                    Player player = Vars.player;
+
+                    if (core != null && core.acceptStack(unit.stack.item, unit.stack.amount, unit) > 0) {
+                        int accepted = core.acceptStack(unit.stack.item, unit.stack.amount, unit);
+                        core.handleStack(unit.stack.item, accepted, unit);
+                        unit.stack.amount -= accepted;
+                    } else if (player != null && player.unit() != null) {
+                        player.unit().addItem(unit.stack.item, unit.stack.amount);
+                        unit.stack.amount = 0;
+                    }
+                }
             }
         }
     }
 
-    private Tile findNearestOre() {
-        Item[] searchOres = {Items.copper, Items.lead, Items.coal, Items.titanium, Items.scrap, Items.sand};
-        for (Item item : searchOres) {
-            Tile ore = Vars.indexer.findClosestOre(unit.x, unit.y, item);
-            if (ore != null) return ore;
+    private Tile findClosestOreTile() {
+        Item[] ores = {Items.copper, Items.lead, Items.coal, Items.titanium, Items.scrap, Items.sand};
+        Tile closest = null;
+        float minDst = Float.MAX_VALUE;
+
+        for (Item item : ores) {
+            Tile tile = Vars.indexer.findClosestOre(unit.x, unit.y, item);
+            if (tile != null) {
+                float dst = unit.dst(tile.worldx(), tile.worldy());
+                if (dst < minDst) {
+                    minDst = dst;
+                    closest = tile;
+                }
+            }
         }
-        return null;
+        return closest;
     }
-  }
+}
