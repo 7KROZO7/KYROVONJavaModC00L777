@@ -5,10 +5,12 @@ import arc.math.geom.Vec2;
 import arc.scene.event.Touchable;
 import arc.scene.ui.TextButton;
 import arc.scene.ui.layout.Table;
+import arc.struct.Seq;
 import arc.util.Align;
 import arc.util.Time;
 import extra.content.KVREffects;
 import mindustry.Vars;
+import mindustry.ai.UnitCommand;
 import mindustry.gen.Tex;
 import mindustry.gen.Unit;
 import mindustry.type.UnitType;
@@ -17,9 +19,12 @@ public class PingBubbleUI {
     private static Table bubbleTable;
     private static Unit targetPing;
     private static float lastSpawnTime = -3600f;
-    private static final float COOLDOWN = 3600f; // 60s
+    private static final float COOLDOWN = 3600f; // 60 seconds
     private static final Vec2 screenCoords = new Vec2();
     private static float autoDismissTime = -1f;
+
+    // Temporary floating dialogue bubbles for individual mites
+    private static final Seq<MiteSpeechBubble> miteBubbles = new Seq<>();
 
     public static boolean isVisible() {
         return bubbleTable != null && bubbleTable.visible && targetPing != null;
@@ -85,19 +90,29 @@ public class PingBubbleUI {
                         lastSpawnTime = Time.time;
                         hide();
 
-                        // Case-insensitive lookup for JSON-defined Rift Mite
                         UnitType miteType = Vars.content.units().find(u -> u != null && u.name != null && u.name.toLowerCase().endsWith("rift-mite"));
 
                         if (miteType != null) {
+                            // 3 Unique intelligent dialogue lines for each Mite
+                            String[] dialogues = {
+                                "[#38bdf8]Mite Alpha:[] *Bzz-pip!* Spatial link stable—harvesting ores!",
+                                "[#38bdf8]Mite Beta:[] *Whirr!* Target locked, 30 seconds on the clock!",
+                                "[#38bdf8]Mite Gamma:[] *Chirp!* Tunneling matrix active, let's dig!"
+                            };
+
                             for (int i = 0; i < 3; i++) {
-                                float sx = px + (i - 1) * 16f;
+                                float sx = px + (i - 1) * 18f;
                                 float sy = py - 14f;
 
                                 KVREffects.warpRift.at(sx, sy);
 
                                 Unit mite = miteType.spawn(Vars.player.team(), sx, sy);
                                 if (mite != null) {
-                                    mite.elevation = 1f;
+                                    mite.elevation = 1f; // Force airborne
+                                    mite.command(UnitCommand.mineCommand); // Force active mining stance
+
+                                    // Spawn unique floating speech bubble over this Mite
+                                    spawnMiteSpeech(mite, dialogues[i % dialogues.length]);
                                 }
                             }
                         }
@@ -111,21 +126,42 @@ public class PingBubbleUI {
         updatePosition();
     }
 
+    private static void spawnMiteSpeech(Unit mite, String text) {
+        Table table = new Table();
+        table.touchable = Touchable.disabled;
+        table.table(Tex.pane, t -> {
+            t.margin(6f);
+            t.add(text).style(mindustry.ui.Styles.outlineLabel).center();
+        });
+
+        Vars.ui.hudGroup.addChild(table);
+        miteBubbles.add(new MiteSpeechBubble(mite, table, Time.time + 240f)); // 4s display time
+    }
+
     public static void updatePosition() {
-        if (bubbleTable == null || !bubbleTable.visible) return;
-
-        if (autoDismissTime > 0 && Time.time >= autoDismissTime) {
-            hide();
-            return;
+        // Update Ping's main speech bubble
+        if (bubbleTable != null && bubbleTable.visible) {
+            if (autoDismissTime > 0 && Time.time >= autoDismissTime) {
+                hide();
+            } else if (targetPing == null || !targetPing.isValid()) {
+                hide();
+            } else {
+                Core.camera.project(screenCoords.set(targetPing.x, targetPing.y + 20f));
+                bubbleTable.setPosition(screenCoords.x, screenCoords.y, Align.bottom);
+            }
         }
 
-        if (targetPing == null || !targetPing.isValid()) {
-            hide();
-            return;
+        // Update each Mite's individual floating dialogue
+        for (int i = miteBubbles.size - 1; i >= 0; i--) {
+            MiteSpeechBubble b = miteBubbles.get(i);
+            if (Time.time >= b.expiryTime || b.unit == null || !b.unit.isValid()) {
+                b.table.remove();
+                miteBubbles.remove(i);
+            } else {
+                Core.camera.project(screenCoords.set(b.unit.x, b.unit.y + 14f));
+                b.table.setPosition(screenCoords.x, screenCoords.y, Align.bottom);
+            }
         }
-
-        Core.camera.project(screenCoords.set(targetPing.x, targetPing.y + 20f));
-        bubbleTable.setPosition(screenCoords.x, screenCoords.y, Align.bottom);
     }
 
     public static void hide() {
@@ -141,6 +177,18 @@ public class PingBubbleUI {
             bubbleTable = new Table();
             bubbleTable.touchable = Touchable.enabled;
             Vars.ui.hudGroup.addChild(bubbleTable);
+        }
+    }
+
+    private static class MiteSpeechBubble {
+        public Unit unit;
+        public Table table;
+        public float expiryTime;
+
+        public MiteSpeechBubble(Unit unit, Table table, float expiryTime) {
+            this.unit = unit;
+            this.table = table;
+            this.expiryTime = expiryTime;
         }
     }
 }
