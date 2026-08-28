@@ -22,7 +22,7 @@ public class PingHUDWidget {
         hudTable.table(Tex.pane, container -> {
             container.margin(4f);
 
-            // 1. EMPTY DRAG HANDLE (Only drags the UI)
+            // 1. Drag Handle
             Table dragGrip = container.table(Tex.buttonTrans, grip -> {
                 grip.add("[#a080ff] ≡ []").style(mindustry.ui.Styles.outlineLabel).center();
             }).size(32f, 36f).padRight(4f).get();
@@ -34,7 +34,7 @@ public class PingHUDWidget {
                 }
             });
 
-            // 2. PRESSABLE BUTTON (Only opens dialogue / mites)
+            // 2. Clickable Button
             container.button("[#c084fc]Ping[]", () -> {
                 Unit ping = Groups.unit.find(u -> u.type == KVRUnits.ping && u.team == Vars.player.team());
                 if (ping != null && ping.isValid()) {
