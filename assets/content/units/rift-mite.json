@@ -4,7 +4,6 @@
   "description": "A short-lived interdimensional mining drone.",
   "defaultController": "MinerAI",
   "flying": true,
-  "hovering": true,
   "shadowElevation": 0.15,
   "mineTier": 2,
   "mineSpeed": 4.5,
@@ -17,7 +16,8 @@
   "drag": 0.06,
   "accel": 0.15,
   "hitSize": 6,
-  "engineSize": 1.4,
+  "engineSize": 1.6,
+  "engineOffset": 3.5,
   "engineColor": "38bdf8",
   "outlineColor": "1e132e"
 }
