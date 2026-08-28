@@ -17,11 +17,11 @@ public class CompanionAI extends AIController {
     public void updateMovement() {
         Player player = Vars.player;
 
-        // 30-Second Lifespan for JSON Rift Mites
+        // 30-Second Lifespan (Negative Regen): Drains 150 HP over 1800 ticks (30s)
         Groups.unit.each(u -> u.type != null && u.type.name != null && u.type.name.contains("rift-mite"), u -> {
             u.health -= (150f / (30f * 60f)) * Time.delta;
 
-            // Return to home dimension via warp rift
+            // When time expires: Vanishes cleanly back through a warp rift
             if (u.health <= 0) {
                 KVREffects.warpRift.at(u.x, u.y);
                 u.remove();
@@ -35,7 +35,7 @@ public class CompanionAI extends AIController {
             Unit target = player.unit();
             float distance = unit.dst(target);
 
-            // Warp if distant or respawned
+            // Warp to player if respawned or far away
             if (distance > 220f) {
                 KVREffects.warpRift.at(unit.x, unit.y);
                 unit.set(target.x + 20f, target.y + 20f);
