@@ -2,16 +2,13 @@ package extra.content;
 
 import arc.graphics.Color;
 import extra.ai.CompanionAI;
-import extra.ai.MiteAI;
 import mindustry.gen.UnitEntity;
 import mindustry.type.UnitType;
 
 public class KVRUnits {
     public static UnitType ping;
-    public static UnitType riftMite;
 
     public static void load() {
-        // --- PING (Companion Guide) ---
         ping = new UnitType("ping") {{
             localizedName = "Ping";
             description = "A friendly dimensional observer drone.";
@@ -40,36 +37,6 @@ public class KVRUnits {
             trailLength = 12;
             trailColor = Color.valueOf("a855f7");
             outlineColor = Color.valueOf("2a1645");
-        }};
-
-        // --- RIFT MITE (Mining Drone) ---
-        riftMite = new UnitType("rift-mite") {{
-            localizedName = "Rift Mite";
-            description = "A short-lived interdimensional mining drone.";
-            controller = u -> new MiteAI();
-            constructor = UnitEntity::create;
-
-            flying = true;
-            hovering = true;
-            shadowElevation = 0.15f;
-            speed = 2.8f;
-            accel = 0.15f;
-            drag = 0.06f;
-            hitSize = 6f;
-            health = 150f;
-            itemCapacity = 20;
-
-            mineTier = 2;
-            mineSpeed = 4.5f;
-            mineRange = 70f;
-            mineFloor = true;
-            mineWalls = true;
-
-            // Engine plume & glow visuals
-            engineSize = 1.8f;
-            engineOffset = 3.5f;
-            engineColor = Color.valueOf("38bdf8");
-            outlineColor = Color.valueOf("1e132e");
         }};
     }
 }
