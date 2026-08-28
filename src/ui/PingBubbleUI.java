@@ -11,6 +11,7 @@ import arc.util.Time;
 import extra.content.KVREffects;
 import mindustry.Vars;
 import mindustry.ai.UnitCommand;
+import mindustry.ai.types.CommandAI;
 import mindustry.gen.Tex;
 import mindustry.gen.Unit;
 import mindustry.type.UnitType;
@@ -93,7 +94,6 @@ public class PingBubbleUI {
                         UnitType miteType = Vars.content.units().find(u -> u != null && u.name != null && u.name.toLowerCase().endsWith("rift-mite"));
 
                         if (miteType != null) {
-                            // 3 Unique intelligent dialogue lines for each Mite
                             String[] dialogues = {
                                 "[#38bdf8]Mite Alpha:[] *Bzz-pip!* Spatial link stable—harvesting ores!",
                                 "[#38bdf8]Mite Beta:[] *Whirr!* Target locked, 30 seconds on the clock!",
@@ -101,15 +101,19 @@ public class PingBubbleUI {
                             };
 
                             for (int i = 0; i < 3; i++) {
-                                float sx = px + (i - 1) * 18f;
+                                float sx = px + (i - 1) * 16f;
                                 float sy = py - 14f;
 
                                 KVREffects.warpRift.at(sx, sy);
 
                                 Unit mite = miteType.spawn(Vars.player.team(), sx, sy);
                                 if (mite != null) {
-                                    mite.elevation = 1f; // Force airborne
-                                    mite.command(UnitCommand.mineCommand); // Force active mining stance
+                                    mite.elevation = 1f;
+
+                                    // Assign active mining command
+                                    if (mite.controller() instanceof CommandAI ai) {
+                                        ai.command = UnitCommand.mineCommand;
+                                    }
 
                                     // Spawn unique floating speech bubble over this Mite
                                     spawnMiteSpeech(mite, dialogues[i % dialogues.length]);
