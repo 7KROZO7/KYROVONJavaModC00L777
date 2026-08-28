@@ -46,13 +46,13 @@ public class KVRUnits {
         riftMite = new UnitType("rift-mite") {{
             localizedName = "Rift Mite";
             description = "A short-lived interdimensional mining drone.";
-            controller = u -> new MiteAI(); // Custom lag-free AI
+            controller = u -> new MiteAI();
             constructor = UnitEntity::create;
 
             flying = true;
             hovering = true;
             shadowElevation = 0.15f;
-            speed = 2.6f;
+            speed = 2.8f;
             accel = 0.15f;
             drag = 0.06f;
             hitSize = 6f;
@@ -65,7 +65,9 @@ public class KVRUnits {
             mineFloor = true;
             mineWalls = true;
 
-            engineSize = 1.4f;
+            // Engine thruster offset for natural flight visuals
+            engineSize = 1.6f;
+            engineOffset = 3.5f;
             engineColor = Color.valueOf("38bdf8");
             outlineColor = Color.valueOf("1e132e");
         }};
