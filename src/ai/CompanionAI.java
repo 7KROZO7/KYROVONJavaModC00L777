@@ -1,11 +1,9 @@
 package extra.ai;
 
 import arc.math.geom.Vec2;
-import arc.util.Time;
 import extra.content.KVREffects;
 import mindustry.Vars;
 import mindustry.entities.units.AIController;
-import mindustry.gen.Groups;
 import mindustry.gen.Player;
 import mindustry.gen.Unit;
 
@@ -16,16 +14,7 @@ public class CompanionAI extends AIController {
     public void updateMovement() {
         Player player = Vars.player;
 
-        // 30-Second Lifespan for Mites
-        Groups.unit.each(u -> u.type != null && u.type.name != null && u.type.name.contains("rift-mite"), u -> {
-            u.health -= (150f / (30f * 60f)) * Time.delta;
-
-            if (u.health <= 0) {
-                KVREffects.warpRift.at(u.x, u.y);
-                u.remove();
-            }
-        });
-
+        // ONLY follows player — no nested Groups.unit calls
         if (player != null && player.unit() != null && player.unit().isValid() && player.team() == unit.team) {
             Unit target = player.unit();
             float distance = unit.dst(target);
