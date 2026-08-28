@@ -2,6 +2,7 @@ package extra.ui;
 
 import arc.scene.event.DragListener;
 import arc.scene.event.InputEvent;
+import arc.scene.event.Touchable;
 import arc.scene.ui.layout.Table;
 import arc.util.Align;
 import extra.content.KVRUnits;
@@ -17,9 +18,11 @@ public class PingHUDWidget {
         if (hudTable != null) return;
 
         hudTable = new Table();
+        hudTable.touchable = Touchable.childrenOnly; // Allows all clicks around it to pass to the game
         hudTable.setPosition(24f, 130f, Align.bottomLeft);
 
         hudTable.table(Tex.pane, container -> {
+            container.touchable = Touchable.enabled;
             container.margin(4f);
 
             // 1. Drag Handle
@@ -36,7 +39,7 @@ public class PingHUDWidget {
 
             // 2. Clickable Button
             container.button("[#c084fc]Ping[]", () -> {
-                Unit ping = Groups.unit.find(u -> u.type == KVRUnits.ping && u.team == Vars.player.team());
+                Unit ping = Groups.unit.find(u -> u.type != null && u.type.name != null && u.type.name.contains("ping") && u.team == Vars.player.team());
                 if (ping != null && ping.isValid()) {
                     if (PingBubbleUI.isVisible()) {
                         PingBubbleUI.hide();
