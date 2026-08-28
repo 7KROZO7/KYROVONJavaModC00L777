@@ -1,6 +1,7 @@
 package extra;
 
 import arc.Events;
+import arc.util.Time;
 import extra.content.KVREffects;
 import extra.content.KVRUnits;
 import extra.ui.PingBubbleUI;
@@ -26,13 +27,21 @@ public class KVRMod extends Mod {
         Events.run(Trigger.update, () -> {
             if (!Vars.state.isPlaying() || Vars.player == null) return;
 
-            // Safe UI positioning
+            // Safe UI updates on render thread
             PingBubbleUI.updatePosition();
+
+            // Safe 30s Mite Lifespan (Runs outside unit physics loop)
+            Groups.unit.each(u -> u.type != null && u.type.name != null && u.type.name.contains("rift-mite"), u -> {
+                u.health -= (150f / (30f * 60f)) * Time.delta;
+                if (u.health <= 0) {
+                    KVREffects.warpRift.at(u.x, u.y);
+                    u.remove();
+                }
+            });
 
             Unit playerUnit = Vars.player.unit();
             if (playerUnit == null || !playerUnit.isValid() || playerUnit.dead) return;
 
-            // Name-based search to prevent duplicate spawn loops
             Unit ping = Groups.unit.find(u -> u.type != null && u.type.name != null && u.type.name.contains("ping") && u.team == Vars.player.team());
 
             if (ping == null || !ping.isValid() || ping.dead) {
