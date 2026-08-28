@@ -8,10 +8,10 @@ import arc.scene.ui.layout.Table;
 import arc.util.Align;
 import arc.util.Time;
 import extra.content.KVREffects;
-import extra.content.KVRUnits;
 import mindustry.Vars;
 import mindustry.gen.Tex;
 import mindustry.gen.Unit;
+import mindustry.type.UnitType;
 
 public class PingBubbleUI {
     private static Table bubbleTable;
@@ -39,7 +39,7 @@ public class PingBubbleUI {
                 .style(mindustry.ui.Styles.outlineLabel).left();
         });
 
-        autoDismissTime = Time.time + 300f;
+        autoDismissTime = Time.time + 300f; // 5s auto-dismiss
         updatePosition();
     }
 
@@ -85,16 +85,19 @@ public class PingBubbleUI {
                         lastSpawnTime = Time.time;
                         hide();
 
-                        if (KVRUnits.riftMite != null) {
+                        // Case-insensitive lookup for JSON-defined Rift Mite
+                        UnitType miteType = Vars.content.units().find(u -> u != null && u.name != null && u.name.toLowerCase().endsWith("rift-mite"));
+
+                        if (miteType != null) {
                             for (int i = 0; i < 3; i++) {
                                 float sx = px + (i - 1) * 16f;
                                 float sy = py - 14f;
 
                                 KVREffects.warpRift.at(sx, sy);
 
-                                Unit mite = KVRUnits.riftMite.spawn(Vars.player.team(), sx, sy);
+                                Unit mite = miteType.spawn(Vars.player.team(), sx, sy);
                                 if (mite != null) {
-                                    mite.elevation = 1f; // Guaranteed airborne flight
+                                    mite.elevation = 1f;
                                 }
                             }
                         }
