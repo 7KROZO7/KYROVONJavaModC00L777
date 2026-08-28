@@ -59,7 +59,7 @@ public class PingBubbleUI {
             main.touchable = Touchable.enabled;
             main.margin(10f);
 
-            // Header
+            // Header (Dialogue + [✖] Close Button)
             main.table(header -> {
                 if (remainingTicks > 0) {
                     header.add("[#c084fc]Ping:[] *Whirr!* Subspace cooling down!\n[#ff79c6]Wait " + remainingSeconds + "s before tearing another rift.[]")
@@ -94,7 +94,7 @@ public class PingBubbleUI {
 
                                 Unit mite = KVRUnits.riftMite.spawn(Vars.player.team(), sx, sy);
                                 if (mite != null) {
-                                    mite.elevation = 1f;
+                                    mite.elevation = 1f; // Guaranteed airborne flight
                                 }
                             }
                         }
