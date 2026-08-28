@@ -23,17 +23,17 @@ public class KVRMod extends Mod {
     public void init() {
         PingHUDWidget.build();
 
-        // Main game tick loop: UI and lifecycle updates happen HERE, not inside unit AI
         Events.run(Trigger.update, () -> {
             if (!Vars.state.isPlaying() || Vars.player == null) return;
 
-            // Safe UI positioning on the render thread
+            // Safe UI positioning
             PingBubbleUI.updatePosition();
 
             Unit playerUnit = Vars.player.unit();
             if (playerUnit == null || !playerUnit.isValid() || playerUnit.dead) return;
 
-            Unit ping = Groups.unit.find(u -> u.type == KVRUnits.ping && u.team == Vars.player.team());
+            // Name-based search to prevent duplicate spawn loops
+            Unit ping = Groups.unit.find(u -> u.type != null && u.type.name != null && u.type.name.contains("ping") && u.team == Vars.player.team());
 
             if (ping == null || !ping.isValid() || ping.dead) {
                 float sx = playerUnit.x + 24f;
