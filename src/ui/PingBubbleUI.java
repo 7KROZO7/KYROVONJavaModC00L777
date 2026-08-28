@@ -35,15 +35,15 @@ public class PingBubbleUI {
         ensureTableCreated();
         bubbleTable.clear();
         bubbleTable.visible = true;
+        bubbleTable.touchable = Touchable.disabled; // Greetings don't need buttons
 
         bubbleTable.table(Tex.pane, main -> {
-            main.touchable = Touchable.disabled;
             main.margin(10f);
             main.add("[#c084fc]Ping:[] *Bzz-wip!* Hello there, fellow ally!\nDimensional link calibrated and ready!")
                 .style(mindustry.ui.Styles.outlineLabel).left();
         });
 
-        autoDismissTime = Time.time + 300f;
+        autoDismissTime = Time.time + 300f; // 5s auto-dismiss
         updatePosition();
     }
 
@@ -55,6 +55,8 @@ public class PingBubbleUI {
         ensureTableCreated();
         bubbleTable.clear();
         bubbleTable.visible = true;
+        // CRITICAL FIX: Re-enables button clicks every time the menu opens
+        bubbleTable.touchable = Touchable.childrenOnly;
 
         float remainingTicks = (lastSpawnTime + COOLDOWN) - Time.time;
         int remainingSeconds = (int) Math.ceil(remainingTicks / 60f);
@@ -90,7 +92,7 @@ public class PingBubbleUI {
                         lastSpawnTime = Time.time;
                         hide();
 
-                        UnitType miteType = Vars.content.units().find(u -> u != null && u.name != null && u.name.toLowerCase().endsWith("rift-mite"));
+                        UnitType miteType = Vars.content.units().find(u -> u != null && u.name != null && u.name.toLowerCase().contains("rift-mite"));
 
                         if (miteType != null) {
                             String[] dialogues = {
@@ -171,7 +173,6 @@ public class PingBubbleUI {
     private static void ensureTableCreated() {
         if (bubbleTable == null) {
             bubbleTable = new Table();
-            // CRITICAL: childrenOnly ensures the background table never blocks screen touches
             bubbleTable.touchable = Touchable.childrenOnly;
             Vars.ui.hudGroup.addChild(bubbleTable);
         }
