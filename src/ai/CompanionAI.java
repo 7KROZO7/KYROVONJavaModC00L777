@@ -17,18 +17,18 @@ public class CompanionAI extends AIController {
     public void updateMovement() {
         Player player = Vars.player;
 
-        // 30-Second Lifespan (Negative Regen): Drains 150 HP over 1800 ticks (30s)
+        // 30-Second Lifespan (150 HP over 1800 ticks = 5 HP/sec)
         Groups.unit.each(u -> u.type != null && u.type.name != null && u.type.name.contains("rift-mite"), u -> {
             u.health -= (150f / (30f * 60f)) * Time.delta;
 
-            // When time expires: Vanishes cleanly back through a warp rift
+            // When time expires: Vanishes cleanly back through a warp portal
             if (u.health <= 0) {
                 KVREffects.warpRift.at(u.x, u.y);
                 u.remove();
             }
         });
 
-        // Update speech bubble position
+        // Update active speech bubble position above Ping
         PingBubbleUI.updatePosition();
 
         if (player != null && player.unit() != null && player.unit().isValid() && player.team() == unit.team) {
