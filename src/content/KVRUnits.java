@@ -11,7 +11,7 @@ public class KVRUnits {
     public static UnitType riftMite;
 
     public static void load() {
-        // --- PING ---
+        // --- PING (Companion Guide) ---
         ping = new UnitType("ping") {{
             localizedName = "Ping";
             description = "A friendly dimensional observer drone.";
@@ -42,7 +42,7 @@ public class KVRUnits {
             outlineColor = Color.valueOf("2a1645");
         }};
 
-        // --- RIFT MITE ---
+        // --- RIFT MITE (Mining Drone) ---
         riftMite = new UnitType("rift-mite") {{
             localizedName = "Rift Mite";
             description = "A short-lived interdimensional mining drone.";
@@ -65,8 +65,8 @@ public class KVRUnits {
             mineFloor = true;
             mineWalls = true;
 
-            // Engine thruster offset for natural flight visuals
-            engineSize = 1.6f;
+            // Engine plume & glow visuals
+            engineSize = 1.8f;
             engineOffset = 3.5f;
             engineColor = Color.valueOf("38bdf8");
             outlineColor = Color.valueOf("1e132e");
