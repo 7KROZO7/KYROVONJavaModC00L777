@@ -4,20 +4,28 @@
   "description": "An intelligent interdimensional mining drone.",
   "defaultController": "MinerAI",
   "flying": true,
-  "shadowElevation": 0.15,
+  "shadowElevation": 0.12,
+
+  "targetable": false,
+  "hittable": false,
+
   "mineTier": 2,
   "mineSpeed": 4.5,
   "mineRange": 70,
   "mineFloor": true,
   "mineWalls": true,
+
   "health": 150,
   "itemCapacity": 20,
   "speed": 2.6,
   "drag": 0.06,
   "accel": 0.15,
-  "hitSize": 6,
-  "engineSize": 1.6,
-  "engineOffset": 3.5,
+  "hitSize": 5,
+
+  "trailLength": 6,
+  "trailColor": "38bdf8",
+  "engineSize": 1.2,
+  "engineOffset": 2.5,
   "engineColor": "38bdf8",
   "outlineColor": "1e132e"
 }
