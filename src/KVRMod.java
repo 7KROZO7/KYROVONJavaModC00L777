@@ -13,9 +13,6 @@ import mindustry.mod.Mod;
 
 public class KVRMod extends Mod {
 
-    public KVRMod() {
-    }
-
     @Override
     public void loadContent() {
         KVREffects.load();
@@ -26,8 +23,12 @@ public class KVRMod extends Mod {
     public void init() {
         PingHUDWidget.build();
 
+        // Main game tick loop: UI and lifecycle updates happen HERE, not inside unit AI
         Events.run(Trigger.update, () -> {
             if (!Vars.state.isPlaying() || Vars.player == null) return;
+
+            // Safe UI positioning on the render thread
+            PingBubbleUI.updatePosition();
 
             Unit playerUnit = Vars.player.unit();
             if (playerUnit == null || !playerUnit.isValid() || playerUnit.dead) return;
