@@ -10,8 +10,6 @@ import arc.util.Align;
 import arc.util.Time;
 import extra.content.KVREffects;
 import mindustry.Vars;
-import mindustry.ai.UnitCommand;
-import mindustry.ai.types.CommandAI;
 import mindustry.gen.Tex;
 import mindustry.gen.Unit;
 import mindustry.type.UnitType;
@@ -20,11 +18,10 @@ public class PingBubbleUI {
     private static Table bubbleTable;
     private static Unit targetPing;
     private static float lastSpawnTime = -3600f;
-    private static final float COOLDOWN = 3600f; // 60 seconds
+    private static final float COOLDOWN = 3600f; // 60s
     private static final Vec2 screenCoords = new Vec2();
     private static float autoDismissTime = -1f;
 
-    // Temporary floating dialogue bubbles for individual mites
     private static final Seq<MiteSpeechBubble> miteBubbles = new Seq<>();
 
     public static boolean isVisible() {
@@ -45,7 +42,7 @@ public class PingBubbleUI {
                 .style(mindustry.ui.Styles.outlineLabel).left();
         });
 
-        autoDismissTime = Time.time + 300f; // 5s auto-dismiss
+        autoDismissTime = Time.time + 300f;
         updatePosition();
     }
 
@@ -65,7 +62,7 @@ public class PingBubbleUI {
             main.touchable = Touchable.enabled;
             main.margin(10f);
 
-            // Header (Dialogue + [✖] Close Button)
+            // Header
             main.table(header -> {
                 if (remainingTicks > 0) {
                     header.add("[#c084fc]Ping:[] *Whirr!* Subspace cooling down!\n[#ff79c6]Wait " + remainingSeconds + "s before tearing another rift.[]")
@@ -78,7 +75,7 @@ public class PingBubbleUI {
                 header.button("✖", PingBubbleUI::hide).size(32f, 32f).right();
             }).growX().padBottom(6f).row();
 
-            // Spawn Mites Button
+            // Spawn Button
             if (remainingTicks > 0) {
                 TextButton btn = main.button("⏳ Recharging (" + remainingSeconds + "s)", () -> {}).size(220f, 38f).get();
                 btn.setDisabled(true);
@@ -109,13 +106,6 @@ public class PingBubbleUI {
                                 Unit mite = miteType.spawn(Vars.player.team(), sx, sy);
                                 if (mite != null) {
                                     mite.elevation = 1f;
-
-                                    // Assign active mining command
-                                    if (mite.controller() instanceof CommandAI ai) {
-                                        ai.command = UnitCommand.mineCommand;
-                                    }
-
-                                    // Spawn unique floating speech bubble over this Mite
                                     spawnMiteSpeech(mite, dialogues[i % dialogues.length]);
                                 }
                             }
@@ -139,11 +129,10 @@ public class PingBubbleUI {
         });
 
         Vars.ui.hudGroup.addChild(table);
-        miteBubbles.add(new MiteSpeechBubble(mite, table, Time.time + 240f)); // 4s display time
+        miteBubbles.add(new MiteSpeechBubble(mite, table, Time.time + 240f));
     }
 
     public static void updatePosition() {
-        // Update Ping's main speech bubble
         if (bubbleTable != null && bubbleTable.visible) {
             if (autoDismissTime > 0 && Time.time >= autoDismissTime) {
                 hide();
@@ -155,7 +144,6 @@ public class PingBubbleUI {
             }
         }
 
-        // Update each Mite's individual floating dialogue
         for (int i = miteBubbles.size - 1; i >= 0; i--) {
             MiteSpeechBubble b = miteBubbles.get(i);
             if (Time.time >= b.expiryTime || b.unit == null || !b.unit.isValid()) {
