@@ -37,6 +37,7 @@ public class PingBubbleUI {
         bubbleTable.visible = true;
 
         bubbleTable.table(Tex.pane, main -> {
+            main.touchable = Touchable.disabled;
             main.margin(10f);
             main.add("[#c084fc]Ping:[] *Bzz-wip!* Hello there, fellow ally!\nDimensional link calibrated and ready!")
                 .style(mindustry.ui.Styles.outlineLabel).left();
@@ -64,6 +65,7 @@ public class PingBubbleUI {
 
             // Header
             main.table(header -> {
+                header.touchable = Touchable.enabled;
                 if (remainingTicks > 0) {
                     header.add("[#c084fc]Ping:[] *Whirr!* Subspace cooling down!\n[#ff79c6]Wait " + remainingSeconds + "s before tearing another rift.[]")
                         .style(mindustry.ui.Styles.outlineLabel).left().padRight(12f);
@@ -124,6 +126,7 @@ public class PingBubbleUI {
         Table table = new Table();
         table.touchable = Touchable.disabled;
         table.table(Tex.pane, t -> {
+            t.touchable = Touchable.disabled;
             t.margin(6f);
             t.add(text).style(mindustry.ui.Styles.outlineLabel).center();
         });
@@ -159,6 +162,7 @@ public class PingBubbleUI {
     public static void hide() {
         if (bubbleTable != null) {
             bubbleTable.visible = false;
+            bubbleTable.touchable = Touchable.disabled;
         }
         targetPing = null;
         autoDismissTime = -1f;
@@ -167,7 +171,8 @@ public class PingBubbleUI {
     private static void ensureTableCreated() {
         if (bubbleTable == null) {
             bubbleTable = new Table();
-            bubbleTable.touchable = Touchable.enabled;
+            // CRITICAL: childrenOnly ensures the background table never blocks screen touches
+            bubbleTable.touchable = Touchable.childrenOnly;
             Vars.ui.hudGroup.addChild(bubbleTable);
         }
     }
