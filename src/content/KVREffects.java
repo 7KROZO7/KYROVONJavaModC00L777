@@ -18,13 +18,12 @@ public class KVREffects {
             Color neonLilac = Color.valueOf("c084fc");
             Color sparkCyan = Color.valueOf("38bdf8");
 
-            // Portal scale: snappy pop-in and snap-out
             float scale = Mathf.curve(e.fin(), 0f, 0.15f) * Mathf.curve(e.fout(), 0f, 0.15f);
             float baseRadius = 24f * scale;
 
             if (baseRadius <= 0.1f) return;
 
-            // 1. Swirling outer liquid border (Wavy fluid rim)
+            // 1. Swirling fluid outer rim
             Draw.color(neonLilac, portalBase, e.fin());
             Lines.stroke(e.fout() * 3f);
             int segments = 14;
@@ -42,11 +41,11 @@ public class KVREffects {
                 );
             }
 
-            // 2. Dark void core inside portal
+            // 2. Void core
             Draw.color(darkVoid);
             Fill.circle(e.x, e.y, baseRadius * 0.85f);
 
-            // 3. Inner spinning spiral vortex arms
+            // 3. Rotating spiral arms
             Draw.color(portalBase, neonLilac, e.fout());
             for (int i = 0; i < 3; i++) {
                 float spiralAngle = (i * 120f) + (e.fin() * 540f);
@@ -54,7 +53,7 @@ public class KVREffects {
                 Lines.arc(e.x, e.y, baseRadius * 0.55f, 0.3f, spiralAngle);
             }
 
-            // 4. Liquid droplets & dimensional sparks spraying out
+            // 4. Dimensional spark droplets
             Draw.color(sparkCyan);
             Angles.randLenVectors(e.id, 10, baseRadius * 1.5f, (x, y) -> {
                 Fill.circle(e.x + x, e.y + y, e.fout() * 2.2f);
