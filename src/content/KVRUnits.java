@@ -1,11 +1,18 @@
 package extra.content;
 
 import arc.graphics.Color;
+import extra.abilities.DevourAbility;
 import extra.ai.CompanionAI;
 import mindustry.Vars;
+import mindustry.content.Fx;
 import mindustry.content.StatusEffects;
 import mindustry.entities.bullet.BasicBulletType;
-import mindustry.gen.LegsUnit;
+import mindustry.entities.part.RegionPart;
+import mindustry.entities.part.RegionPart.PartMove;
+import mindustry.entities.part.RegionPart.PartProgress;
+import mindustry.gen.CrawlUnit;
+import mindustry.gen.Hitboxc;
+import mindustry.gen.Unit;
 import mindustry.gen.UnitEntity;
 import mindustry.type.UnitType;
 import mindustry.type.Weapon;
@@ -46,44 +53,64 @@ public class KVRUnits {
             outlineColor = Color.valueOf("2a1645");
         }};
 
-        // --- 2. CHASM BITER ---
+        // --- 2. CHASM BITER (Devour Predator) ---
         chasmBiter = new UnitType("chasm-biter") {{
             localizedName = "Chasm Biter";
-            description = "A savage ground walker that closes distance to tear enemy armor with crushing mandibles.";
-            constructor = LegsUnit::create; // Correct Mindustry entity constructor
+            description = "A heavy segmented rift beast. Devours defeated prey to regenerate its armor and flesh.";
+            constructor = CrawlUnit::create;
 
-            speed = 1.1f;
-            drag = 0.1f;
-            hitSize = 10f;
-            health = 240f;
-            armor = 3f;
-            legCount = 4;
-            legLength = 12f;
-            legForwardScl = 0.8f;
-            legMoveSpace = 1.2f;
-            hovering = false;
+            speed = 0.75f;
+            drag = 0.4f;
+            hitSize = 14f;
+            health = 720f;
+            armor = 6f;
+            omniMovement = false;
+            rotateSpeed = 2.8f;
 
-            weapons.add(new Weapon("krv-jaw") {{
+            // Worm segments
+            segments = 4;
+            segmentScl = 3f;
+            segmentPhase = 5f;
+            segmentMag = 0.5f;
+
+            // Register Devour Ability
+            abilities.add(new DevourAbility(0.05f));
+
+            weapons.add(new Weapon("krv-chasm-biter-jaw") {{
                 x = 0f;
-                y = 4f;
-                reload = 30f;
-                shootCone = 45f;
+                y = 5f;
+                reload = 90f; // 1.5s per bite
+                shootCone = 35f;
                 mirror = false;
                 top = true;
-                shootSound = Vars.tree.loadSound("bite"); // assets/sounds/bite.ogg
+                shootSound = Vars.tree.loadSound("bite");
 
-                bullet = new BasicBulletType(3.0f, 55f) {{
-                    lifetime = 6f;
-                    hitSize = 10f;
+                parts.add(new RegionPart("-mandible") {{
+                    x = 3.5f;
+                    y = 1.5f;
+                    moveRot = 35f;
+                    moves.add(new PartMove(PartProgress.reload, -1f, -1f, 30f));
+                    mirror = true;
+                    under = false;
+                }});
 
-                    // Direct Java reference to the bite animation
+                // Bite Hitbox with 5% Devour Lifesteal on Kill
+                bullet = new BasicBulletType(0f, 100f) {{
+                    lifetime = 1f;
+                    hitSize = 14f;
+                    range = 14f;
+
+                    drawSize = 0f;
+                    width = 0f;
+                    height = 0f;
+
                     hitEffect = KVREffects.voidBite;
-                    despawnEffect = mindustry.content.Fx.none;
-                    shootEffect = mindustry.content.Fx.none;
-                    smokeEffect = mindustry.content.Fx.none;
+                    despawnEffect = Fx.none;
+                    shootEffect = Fx.none;
+                    smokeEffect = Fx.none;
 
                     status = StatusEffects.slow;
-                    statusDuration = 30f;
+                    statusDuration = 45f;
                 }};
             }});
         }};
