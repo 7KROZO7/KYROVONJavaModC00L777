@@ -20,7 +20,7 @@ public class KVRUnits {
     public static UnitType chasmBiter;
 
     public static void load() {
-        // --- 1. PING ---
+        // --- 1. PING (Companion Drone) ---
         ping = new UnitType("ping") {{
             localizedName = "Ping";
             description = "A friendly dimensional observer drone.";
@@ -51,7 +51,7 @@ public class KVRUnits {
             outlineColor = Color.valueOf("2a1645");
         }};
 
-        // --- 2. CHASM BITER (Devour Predator) ---
+        // --- 2. CHASM BITER (Segmented Worm with Devour Melee) ---
         chasmBiter = new UnitType("chasm-biter") {{
             localizedName = "Chasm Biter";
             description = "A heavy segmented rift beast. Devours defeated prey to regenerate its armor and flesh.";
@@ -77,7 +77,7 @@ public class KVRUnits {
             weapons.add(new Weapon("krv-chasm-biter-jaw") {{
                 x = 0f;
                 y = 5f;
-                reload = 90f; // 1.5s per bite
+                reload = 90f; // 1.5 seconds per bite
                 shootCone = 35f;
                 mirror = false;
                 top = true;
@@ -92,16 +92,24 @@ public class KVRUnits {
                     under = false;
                 }});
 
-                // Bite Hitbox with 5% Devour Lifesteal on Kill
-                bullet = new BasicBulletType(0f, 100f) {{
-                    lifetime = 1f;
-                    hitSize = 14f;
-                    range = 14f;
+                // Melee contact sweep connecting with enemy units and buildings
+                bullet = new BasicBulletType(4.0f, 100f) {{
+                    lifetime = 5f; // Sweeps 20px forward
+                    hitSize = 12f;
+                    range = 20f;
 
+                    // Invisible projectile
                     drawSize = 0f;
                     width = 0f;
                     height = 0f;
 
+                    // Collision settings
+                    collides = true;
+                    collidesTiles = true;
+                    collidesAir = false; // Ground-only melee
+                    pierce = false;
+
+                    // Hit effects & sound
                     hitEffect = KVREffects.voidBite;
                     despawnEffect = Fx.none;
                     shootEffect = Fx.none;
