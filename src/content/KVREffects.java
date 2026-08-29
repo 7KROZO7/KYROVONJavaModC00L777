@@ -8,7 +8,7 @@ import arc.graphics.g2d.Lines;
 import arc.graphics.g2d.TextureRegion;
 import arc.math.Angles;
 import arc.math.Mathf;
-import arc.math.geom.Vec2;
+import arc.util.Time;
 import mindustry.entities.Effect;
 
 public class KVREffects {
@@ -16,7 +16,7 @@ public class KVREffects {
     public static Effect voidBite;
 
     public static void load() {
-        // --- 1. DIMENSIONAL WARP RIFT WITH PRE & POST LIGHTNING ---
+        // --- 1. DIMENSIONAL WARP RIFT (Pre & Post Blue Lightning) ---
         warpRift = new Effect(75f, e -> {
             Color darkVoid = Color.valueOf("13091f");
             Color portalBase = Color.valueOf("7a3fd2");
@@ -25,7 +25,7 @@ public class KVREffects {
             Color coreWhite = Color.valueOf("ffffff");
 
             // --- PHASE 1: PRE & POST LIGHTNING CRACKLE (Ticks 0 to 75) ---
-            Draw.color(lightningBlue, coreWhite, Mathf.absin(Time_time(e), 2f, 1f));
+            Draw.color(lightningBlue, coreWhite, Mathf.absin(Time.time, 2f, 1f));
             Lines.stroke(e.fout() * 2f + 0.5f);
 
             int bolts = 6;
@@ -33,7 +33,6 @@ public class KVREffects {
                 float baseAngle = (360f / bolts) * i + Mathf.randomSeed(e.id + i, 360f);
                 float len = 28f * (0.8f + Mathf.sin(e.fin() * 30f + i) * 0.4f);
 
-                // Jagged lightning path
                 float px = e.x, py = e.y;
                 int segments = 4;
                 for (int s = 1; s <= segments; s++) {
@@ -48,12 +47,11 @@ public class KVREffects {
                 }
             }
 
-            // --- PHASE 2: MAIN RIFT PORTAL (Opens smoothly between 0.15 and 0.85) ---
+            // --- PHASE 2: MAIN RIFT PORTAL ---
             float portalProgress = Mathf.curve(e.fin(), 0.15f, 0.4f) * Mathf.curve(e.fout(), 0f, 0.25f);
             float baseRadius = 26f * portalProgress;
 
             if (baseRadius > 0.5f) {
-                // Swirling outer liquid border
                 Draw.color(neonLilac, portalBase, e.fin());
                 Lines.stroke(portalProgress * 3f);
                 int rimSegments = 14;
@@ -114,9 +112,5 @@ public class KVREffects {
                 });
             }
         });
-    }
-
-    private static float Time_time(arc.entities.Effect.EffectContainer e) {
-        return arc.util.Time.time;
     }
 }
