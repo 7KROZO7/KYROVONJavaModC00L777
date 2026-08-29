@@ -7,6 +7,8 @@ import extra.content.KVRUnits;
 import extra.ui.PingBubbleUI;
 import extra.ui.PingHUDWidget;
 import mindustry.Vars;
+import mindustry.content.Fx;
+import mindustry.game.EventType;
 import mindustry.game.EventType.Trigger;
 import mindustry.gen.Groups;
 import mindustry.gen.Unit;
@@ -24,13 +26,26 @@ public class KVRMod extends Mod {
     public void init() {
         PingHUDWidget.build();
 
+        // --- DEVOUR KILL HEALING HOOK ---
+        Events.on(EventType.UnitDestroyEvent.class, event -> {
+            if (event.unit == null) return;
+
+            // Check if killer exists and has the chasm-biter type
+            Unit victim = event.unit;
+            Groups.unit.each(killer -> killer.type == KVRUnits.chasmBiter && killer.team != victim.team && killer.within(victim, 30f), killer -> {
+                float healAmount = Math.max(victim.maxHealth * 0.05f, killer.maxHealth * 0.05f);
+                killer.heal(healAmount);
+                Fx.heal.at(killer.x, killer.y); // Green/purple healing visual
+            });
+        });
+
+        // Main game update loop
         Events.run(Trigger.update, () -> {
             if (!Vars.state.isPlaying() || Vars.player == null) return;
 
-            // Safe UI updates on render thread
             PingBubbleUI.updatePosition();
 
-            // Safe 30s Mite Lifespan (Runs outside unit physics loop)
+            // 30s Mite Lifespan Loop
             Groups.unit.each(u -> u.type != null && u.type.name != null && u.type.name.contains("rift-mite"), u -> {
                 u.health -= (150f / (30f * 60f)) * Time.delta;
                 if (u.health <= 0) {
