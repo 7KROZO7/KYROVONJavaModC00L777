@@ -4,9 +4,11 @@ import arc.Core;
 import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.Fill;
+import arc.graphics.g2d.Lines;
 import arc.graphics.g2d.TextureRegion;
 import arc.math.Angles;
 import arc.math.Mathf;
+import arc.math.geom.Vec2;
 import mindustry.entities.Effect;
 
 public class KVREffects {
@@ -14,48 +16,89 @@ public class KVREffects {
     public static Effect voidBite;
 
     public static void load() {
-        // --- 1. RIFT PORTAL ---
-        warpRift = new Effect(55f, e -> {
+        // --- 1. DIMENSIONAL WARP RIFT WITH PRE & POST LIGHTNING ---
+        warpRift = new Effect(75f, e -> {
             Color darkVoid = Color.valueOf("13091f");
             Color portalBase = Color.valueOf("7a3fd2");
             Color neonLilac = Color.valueOf("c084fc");
-            Color sparkCyan = Color.valueOf("38bdf8");
+            Color lightningBlue = Color.valueOf("38bdf8");
+            Color coreWhite = Color.valueOf("ffffff");
 
-            float scale = Mathf.curve(e.fin(), 0f, 0.15f) * Mathf.curve(e.fout(), 0f, 0.15f);
-            float baseRadius = 24f * scale;
+            // --- PHASE 1: PRE & POST LIGHTNING CRACKLE (Ticks 0 to 75) ---
+            Draw.color(lightningBlue, coreWhite, Mathf.absin(Time_time(e), 2f, 1f));
+            Lines.stroke(e.fout() * 2f + 0.5f);
 
-            if (baseRadius <= 0.1f) return;
+            int bolts = 6;
+            for (int i = 0; i < bolts; i++) {
+                float baseAngle = (360f / bolts) * i + Mathf.randomSeed(e.id + i, 360f);
+                float len = 28f * (0.8f + Mathf.sin(e.fin() * 30f + i) * 0.4f);
 
-            Draw.color(neonLilac, portalBase, e.fin());
-            int segments = 14;
-            for (int i = 0; i < segments; i++) {
-                float rot = e.fin() * 360f;
-                float a1 = (360f / segments) * i + rot;
-                float a2 = (360f / segments) * (i + 1) + rot;
+                // Jagged lightning path
+                float px = e.x, py = e.y;
+                int segments = 4;
+                for (int s = 1; s <= segments; s++) {
+                    float nextLen = (len / segments) * s;
+                    float offsetAngle = baseAngle + Mathf.randomSeed(e.id + i * 10 + s + (int)(e.fin() * 15f), -35f, 35f);
+                    float nx = e.x + Angles.trnsx(offsetAngle, nextLen);
+                    float ny = e.y + Angles.trnsy(offsetAngle, nextLen);
 
-                float r1 = baseRadius + Mathf.sin(a1 * 3f + e.fin() * 20f) * (3.5f * scale);
-                float r2 = baseRadius + Mathf.sin(a2 * 3f + e.fin() * 20f) * (3.5f * scale);
-
-                arc.graphics.g2d.Lines.line(
-                    e.x + Angles.trnsx(a1, r1), e.y + Angles.trnsy(a1, r1),
-                    e.x + Angles.trnsx(a2, r2), e.y + Angles.trnsy(a2, r2)
-                );
+                    Lines.line(px, py, nx, ny);
+                    px = nx;
+                    py = ny;
+                }
             }
 
-            Draw.color(darkVoid);
-            Fill.circle(e.x, e.y, baseRadius * 0.85f);
+            // --- PHASE 2: MAIN RIFT PORTAL (Opens smoothly between 0.15 and 0.85) ---
+            float portalProgress = Mathf.curve(e.fin(), 0.15f, 0.4f) * Mathf.curve(e.fout(), 0f, 0.25f);
+            float baseRadius = 26f * portalProgress;
+
+            if (baseRadius > 0.5f) {
+                // Swirling outer liquid border
+                Draw.color(neonLilac, portalBase, e.fin());
+                Lines.stroke(portalProgress * 3f);
+                int rimSegments = 14;
+                for (int i = 0; i < rimSegments; i++) {
+                    float rot = e.fin() * 480f;
+                    float a1 = (360f / rimSegments) * i + rot;
+                    float a2 = (360f / rimSegments) * (i + 1) + rot;
+
+                    float r1 = baseRadius + Mathf.sin(a1 * 3f + e.fin() * 25f) * (4f * portalProgress);
+                    float r2 = baseRadius + Mathf.sin(a2 * 3f + e.fin() * 25f) * (4f * portalProgress);
+
+                    Lines.line(
+                        e.x + Angles.trnsx(a1, r1), e.y + Angles.trnsy(a1, r1),
+                        e.x + Angles.trnsx(a2, r2), e.y + Angles.trnsy(a2, r2)
+                    );
+                }
+
+                // Inner void singularity
+                Draw.color(darkVoid);
+                Fill.circle(e.x, e.y, baseRadius * 0.85f);
+
+                // Rotating spiral arms
+                Draw.color(portalBase, neonLilac, e.fout());
+                for (int i = 0; i < 3; i++) {
+                    float spiralAngle = (i * 120f) + (e.fin() * 720f);
+                    Lines.stroke(2.2f * portalProgress);
+                    Lines.arc(e.x, e.y, baseRadius * 0.55f, 0.3f, spiralAngle);
+                }
+
+                // Dimensional spark droplets
+                Draw.color(lightningBlue);
+                Angles.randLenVectors(e.id, 12, baseRadius * 1.6f, (x, y) -> {
+                    Fill.circle(e.x + x, e.y + y, e.fout() * 2.5f);
+                });
+            }
         });
 
-        // --- 2. JAW BITE HIT EFFECT (0.5s / 30 Ticks) ---
+        // --- 2. JAW BITE HIT EFFECT (30 Ticks / 0.5s) ---
         voidBite = new Effect(30f, e -> {
             TextureRegion topJaw = Core.atlas.find("krv-bite-jaw-top");
             TextureRegion bottomJaw = Core.atlas.find("krv-bite-jaw-bottom");
 
-            // Jaws snap inward from 16px to 0px over the first 8 ticks
             float clampOffset = Mathf.curve(e.fin(), 0f, 0.25f);
             float currentDistance = (1f - clampOffset) * 16f;
 
-            // Render top and bottom teeth clamping shut
             Draw.color(Color.white, e.fout());
             if (topJaw.found()) {
                 Draw.rect(topJaw, e.x, e.y + currentDistance);
@@ -64,7 +107,6 @@ public class KVREffects {
                 Draw.rect(bottomJaw, e.x, e.y - currentDistance);
             }
 
-            // Burst of dimensional sparks on crunch (after tick 8)
             if (e.fin() > 0.25f) {
                 Draw.color(Color.valueOf("c084fc"), Color.valueOf("38bdf8"), e.fin());
                 Angles.randLenVectors(e.id, 8, e.fin() * 18f, (x, y) -> {
@@ -72,5 +114,9 @@ public class KVREffects {
                 });
             }
         });
+    }
+
+    private static float Time_time(arc.entities.Effect.EffectContainer e) {
+        return arc.util.Time.time;
     }
 }
