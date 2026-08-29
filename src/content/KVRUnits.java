@@ -2,16 +2,13 @@ package extra.content;
 
 import arc.graphics.Color;
 import extra.ai.CompanionAI;
+import mindustry.Vars;
 import mindustry.content.StatusEffects;
 import mindustry.entities.bullet.BasicBulletType;
-import mindustry.entities.effect.MultiEffect;
-import mindustry.entities.part.RegionPart;
-import mindustry.gen.Sounds;
+import mindustry.gen.LegsUnit;
 import mindustry.gen.UnitEntity;
 import mindustry.type.UnitType;
 import mindustry.type.Weapon;
-import mindustry.type.unit.LegsUnitType;
-import mindustry.Vars;
 
 public class KVRUnits {
     public static UnitType ping;
@@ -49,11 +46,11 @@ public class KVRUnits {
             outlineColor = Color.valueOf("2a1645");
         }};
 
-        // --- 2. CHASM BITER (Ground Melee Unit) ---
+        // --- 2. CHASM BITER ---
         chasmBiter = new UnitType("chasm-biter") {{
             localizedName = "Chasm Biter";
             description = "A savage ground walker that closes distance to tear enemy armor with crushing mandibles.";
-            constructor = LegsUnitType::create;
+            constructor = LegsUnit::create; // Correct Mindustry entity constructor
 
             speed = 1.1f;
             drag = 0.1f;
@@ -73,20 +70,20 @@ public class KVRUnits {
                 shootCone = 45f;
                 mirror = false;
                 top = true;
-                shootSound = Vars.tree.loadSound("bite"); // Loads assets/sounds/bite.ogg
+                shootSound = Vars.tree.loadSound("bite"); // assets/sounds/bite.ogg
 
                 bullet = new BasicBulletType(3.0f, 55f) {{
                     lifetime = 6f;
                     hitSize = 10f;
-                    
-                    // Directly links custom Java bite animation:
+
+                    // Direct Java reference to the bite animation
                     hitEffect = KVREffects.voidBite;
                     despawnEffect = mindustry.content.Fx.none;
                     shootEffect = mindustry.content.Fx.none;
                     smokeEffect = mindustry.content.Fx.none;
 
                     status = StatusEffects.slow;
-                    statusDuration = 30f; // 0.5s slow on hit
+                    statusDuration = 30f;
                 }};
             }});
         }};
