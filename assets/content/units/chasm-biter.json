@@ -22,6 +22,7 @@
       "shootCone": 45,
       "mirror": false,
       "top": true,
+      "shootSound": "bite",
       "bullet": {
         "type": "BasicBulletType",
         "damage": 55,
