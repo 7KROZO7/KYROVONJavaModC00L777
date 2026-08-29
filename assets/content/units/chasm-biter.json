@@ -1,0 +1,40 @@
+{
+  "type": "legs",
+  "displayName": "Chasm Biter",
+  "description": "A savage ground walker that closes distance to tear enemy armor with crushing mandibles.",
+  "speed": 1.1,
+  "drag": 0.1,
+  "hitSize": 10,
+  "health": 240,
+  "armor": 3,
+  "legCount": 4,
+  "legLength": 12,
+  "legForwardScl": 0.8,
+  "legMoveSpace": 1.2,
+  "hovering": false,
+
+  "weapons": [
+    {
+      "name": "jaw",
+      "x": 0,
+      "y": 4,
+      "reload": 30,
+      "shootCone": 45,
+      "mirror": false,
+      "top": true,
+      "bullet": {
+        "type": "BasicBulletType",
+        "damage": 55,
+        "speed": 3.0,
+        "lifetime": 6,
+        "hitSize": 10,
+        "hitEffect": "voidBite",
+        "despawnEffect": "none",
+        "shootEffect": "none",
+        "smokeEffect": "none",
+        "status": "slow",
+        "statusDuration": 30
+      }
+    }
+  ]
+}
