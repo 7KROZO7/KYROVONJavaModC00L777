@@ -16,7 +16,7 @@ public class MeleeType extends BulletType {
         super(3.5f, damage);
 
         this.lifetime = range / 3.5f;
-        this.hitSize = 16f;
+        this.hitSize = 14f;
 
         this.drawSize = 0f;
         this.collides = true;
@@ -38,12 +38,13 @@ public class MeleeType extends BulletType {
         this.smokeEffect = Fx.none;
         this.hitColor = Color.valueOf("ef4444");
 
+        // Exactly 1.0s slow debuff (60 ticks)
         this.status = StatusEffects.slow;
-        this.statusDuration = 60f; // 1.0s slow debuff
+        this.statusDuration = 60f;
     }
 
     public MeleeType(float damage) {
-        this(damage, 24f);
+        this(damage, 22f);
     }
 
     @Override
