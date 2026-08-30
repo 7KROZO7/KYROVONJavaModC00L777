@@ -53,7 +53,8 @@ public class KVRUnits {
         }};
 
         // --- 2. CHASM BITER (Segmented Worm with Devour Melee) ---
-        RegionPart mandiblePart = new RegionPart("-mandible") {{
+        // Declare mandiblePart as a field so it's accessible in the load() override
+        final RegionPart mandiblePart = new RegionPart("-mandible") {{
             x = 3.5f;
             y = 6.0f; // 16x16 front boundary alignment
             progress = PartProgress.reload;
@@ -113,7 +114,7 @@ public class KVRUnits {
             }});
         }
 
-        // Direct Texture Loader Override: Assigns both segments AND mandible directly from atlas
+        // Texture Loader Override to resolve all segments cleanly from mod atlas
         @Override
         public void load() {
             super.load();
@@ -134,4 +135,4 @@ public class KVRUnits {
             );
         }};
     }
-}
+            }
