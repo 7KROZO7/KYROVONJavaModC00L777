@@ -7,7 +7,6 @@ import extra.content.KVRUnits;
 import extra.ui.PingBubbleUI;
 import extra.ui.PingHUDWidget;
 import mindustry.Vars;
-import mindustry.content.Fx;
 import mindustry.game.EventType;
 import mindustry.game.EventType.Trigger;
 import mindustry.gen.Groups;
@@ -30,12 +29,11 @@ public class KVRMod extends Mod {
         Events.on(EventType.UnitDestroyEvent.class, event -> {
             if (event.unit == null) return;
 
-            // Check if killer exists and has the chasm-biter type
             Unit victim = event.unit;
-            Groups.unit.each(killer -> killer.type == KVRUnits.chasmBiter && killer.team != victim.team && killer.within(victim, 30f), killer -> {
+            Groups.unit.each(killer -> killer.type == KVRUnits.chasmBiter && killer.team != victim.team && killer.within(victim, 38f), killer -> {
                 float healAmount = Math.max(victim.maxHealth * 0.05f, killer.maxHealth * 0.05f);
                 killer.heal(healAmount);
-                Fx.heal.at(killer.x, killer.y); // Green/purple healing visual
+                KVREffects.blueHeal.at(killer.x, killer.y); // Blue healing aura
             });
         });
 
