@@ -1,7 +1,6 @@
 apply plugin: "java"
 
 sourceSets.main.java.srcDirs = ["src"]
-sourceSets.main.resources.srcDirs = ["assets"]
 
 ext{
     // Mindustry version to depend on.
@@ -69,6 +68,7 @@ tasks.register('jarAndroid'){
 }
 
 jar{
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archiveFileName = "${project.name}Desktop.jar"
 
     from{
@@ -86,6 +86,7 @@ jar{
 }
 
 tasks.register('deploy', Jar){
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     def projectName = project.name
     dependsOn jarAndroid
     dependsOn jar
