@@ -81,7 +81,7 @@ public class KVRUnits {
                 shootCone = 35f;
                 mirror = false;
                 top = true;
-                shootSound = Vars.tree.loadSound("bite");
+                shootSound = Vars.tree.loadSound("krv-bite");
 
                 parts.add(new RegionPart("-mandible") {{
                     x = 3.5f;
