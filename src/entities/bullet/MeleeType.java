@@ -38,13 +38,13 @@ public class MeleeType extends BulletType {
         this.smokeEffect = Fx.none;
         this.hitColor = Color.valueOf("ef4444");
 
-        // Exactly 1.0s slow debuff (60 ticks)
+        // Exactly 1.0s slow (60 ticks)
         this.status = StatusEffects.slow;
         this.statusDuration = 60f;
     }
 
     public MeleeType(float damage) {
-        this(damage, 22f);
+        this(damage, 20f);
     }
 
     @Override
