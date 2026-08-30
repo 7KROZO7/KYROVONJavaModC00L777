@@ -4,7 +4,7 @@ import arc.graphics.Color;
 import extra.abilities.DevourAbility;
 import extra.ai.CompanionAI;
 import extra.entities.bullet.MeleeType;
-import mindustry.content.Fx;
+import mindustry.entities.abilities.RegenAbility;
 import mindustry.entities.part.DrawPart.PartMove;
 import mindustry.entities.part.DrawPart.PartProgress;
 import mindustry.entities.part.RegionPart;
@@ -65,23 +65,32 @@ public class KVRUnits {
             rotateSpeed = 2.8f;
             drawCell = false;
 
+            // Vanilla CrawlUnit terrain & block crushing physics
+            crushDamage = 15f;
+            crushFragile = true;
+            crawlSlowdown = 0.5f;
+            crawlSlowdownFrac = 0.5f;
+
             // Worm segments (matches segment0, segment1, segment2)
             segments = 3;
             segmentScl = 3f;
             segmentPhase = 5f;
             segmentMag = 0.5f;
 
-            // Register Devour Ability
+            // Passive HP Regen & Kill Devour
+            abilities.add(new RegenAbility() {{
+                amount = 0.8f; // ~48 HP/sec passive regen
+            }});
             abilities.add(new DevourAbility(0.05f));
 
             weapons.add(new Weapon() {{
                 x = 0f;
                 y = 0f;
                 reload = 90f; // 1.5s per bite
-                shootCone = 35f;
+                shootCone = 360f; // Full spherical bite cone prevents angle locking
                 mirror = false;
                 top = true;
-                shootSound = Sounds.none; // Silent air snap, crunches on hit
+                shootSound = Sounds.none;
 
                 parts.add(new RegionPart("chasm-biter-mandible") {{
                     x = 3.5f;
@@ -92,7 +101,7 @@ public class KVRUnits {
                     under = false;
                 }});
 
-                // 200 Damage, 38px range sweep
+                // 200 Damage, ~38px reach
                 bullet = new MeleeType(200f, 38f);
             }});
         }};
