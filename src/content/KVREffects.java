@@ -14,7 +14,7 @@ import mindustry.entities.Effect;
 public class KVREffects {
     public static Effect warpRift;
     public static Effect voidBite;
-    public static Effect blueHeal;
+    public static Effect purpleHeal;
 
     public static void load() {
         // --- 1. DIMENSIONAL WARP RIFT ---
@@ -85,7 +85,7 @@ public class KVREffects {
             }
         });
 
-        // --- 2. JAW BITE HIT EFFECT (Red Solid Crunch) ---
+        // --- 2. JAW BITE HIT EFFECT (Normal Solid Sprite, No Glow) ---
         voidBite = new Effect(24f, e -> {
             TextureRegion topJaw = Core.atlas.find("krv-bite-jaw-top");
             TextureRegion bottomJaw = Core.atlas.find("krv-bite-jaw-bottom");
@@ -93,7 +93,10 @@ public class KVREffects {
             float clampOffset = Mathf.curve(e.fin(), 0f, 0.2f);
             float currentDistance = (1f - clampOffset) * 16f;
 
-            Draw.color(Color.white, e.fout());
+            // Clean neutral draw (No bright white glow tint)
+            Draw.color();
+            Draw.alpha(e.fout());
+
             if (topJaw.found()) {
                 Draw.rect(topJaw, e.x, e.y + currentDistance);
             }
@@ -101,20 +104,23 @@ public class KVREffects {
                 Draw.rect(bottomJaw, e.x, e.y - currentDistance);
             }
 
+            // Solid red impact crunch particles
             if (e.fin() > 0.2f) {
                 Draw.color(Color.valueOf("ef4444"), Color.valueOf("991b1b"), e.fin());
                 Angles.randLenVectors(e.id, 8, e.fin() * 16f, (x, y) -> {
                     Fill.circle(e.x + x, e.y + y, e.fout() * 2.4f);
                 });
             }
+
+            Draw.reset();
         });
 
-        // --- 3. BLUE HEALING AURA EFFECT ---
-        blueHeal = new Effect(32f, e -> {
-            Color blue = Color.valueOf("38bdf8");
-            Color lightBlue = Color.valueOf("bae6fd");
+        // --- 3. LIGHT PURPLE HEALING AURA EFFECT ---
+        purpleHeal = new Effect(32f, e -> {
+            Color purple = Color.valueOf("c084fc");
+            Color lightLilac = Color.valueOf("e9d5ff");
 
-            Draw.color(blue, lightBlue, e.fout());
+            Draw.color(purple, lightLilac, e.fout());
             Lines.stroke(e.fout() * 2.5f);
             Lines.circle(e.x, e.y, e.fin() * 22f);
 
