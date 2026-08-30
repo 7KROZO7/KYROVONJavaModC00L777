@@ -73,7 +73,6 @@ public class KVRUnits {
             // Register Devour Ability
             abilities.add(new DevourAbility(0.05f));
 
-            // Unnamed Weapon: leaves center completely clear with no base sprite
             weapons.add(new Weapon() {{
                 x = 0f;
                 y = 0f;
@@ -83,7 +82,6 @@ public class KVRUnits {
                 top = true;
                 shootSound = Vars.tree.loadSound("krv-bite");
 
-                // Points directly to your chasm-biter-mandible.png sprite
                 parts.add(new RegionPart("chasm-biter-mandible") {{
                     x = 3.5f;
                     y = 1.5f;
@@ -93,7 +91,8 @@ public class KVRUnits {
                     under = false;
                 }});
 
-                bullet = new MeleeType(100f, 20f);
+                // 200 Damage, 38px range sweep
+                bullet = new MeleeType(200f, 38f);
             }});
         }};
     }
