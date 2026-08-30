@@ -16,7 +16,7 @@ public class KVREffects {
     public static Effect voidBite;
 
     public static void load() {
-        // --- 1. DIMENSIONAL WARP RIFT (Pre & Post Blue Lightning) ---
+        // --- 1. DIMENSIONAL WARP RIFT ---
         warpRift = new Effect(75f, e -> {
             Color darkVoid = Color.valueOf("13091f");
             Color portalBase = Color.valueOf("7a3fd2");
@@ -24,7 +24,6 @@ public class KVREffects {
             Color lightningBlue = Color.valueOf("38bdf8");
             Color coreWhite = Color.valueOf("ffffff");
 
-            // --- PHASE 1: PRE & POST LIGHTNING CRACKLE (Ticks 0 to 75) ---
             Draw.color(lightningBlue, coreWhite, Mathf.absin(Time.time, 2f, 1f));
             Lines.stroke(e.fout() * 2f + 0.5f);
 
@@ -47,7 +46,6 @@ public class KVREffects {
                 }
             }
 
-            // --- PHASE 2: MAIN RIFT PORTAL ---
             float portalProgress = Mathf.curve(e.fin(), 0.15f, 0.4f) * Mathf.curve(e.fout(), 0f, 0.25f);
             float baseRadius = 26f * portalProgress;
 
@@ -69,11 +67,9 @@ public class KVREffects {
                     );
                 }
 
-                // Inner void singularity
                 Draw.color(darkVoid);
                 Fill.circle(e.x, e.y, baseRadius * 0.85f);
 
-                // Rotating spiral arms
                 Draw.color(portalBase, neonLilac, e.fout());
                 for (int i = 0; i < 3; i++) {
                     float spiralAngle = (i * 120f) + (e.fin() * 720f);
@@ -81,7 +77,6 @@ public class KVREffects {
                     Lines.arc(e.x, e.y, baseRadius * 0.55f, 0.3f, spiralAngle);
                 }
 
-                // Dimensional spark droplets
                 Draw.color(lightningBlue);
                 Angles.randLenVectors(e.id, 12, baseRadius * 1.6f, (x, y) -> {
                     Fill.circle(e.x + x, e.y + y, e.fout() * 2.5f);
@@ -89,12 +84,12 @@ public class KVREffects {
             }
         });
 
-        // --- 2. JAW BITE HIT EFFECT (30 Ticks / 0.5s) ---
-        voidBite = new Effect(30f, e -> {
+        // --- 2. JAW BITE HIT EFFECT (Standard Red Solid Crunch) ---
+        voidBite = new Effect(24f, e -> {
             TextureRegion topJaw = Core.atlas.find("krv-bite-jaw-top");
             TextureRegion bottomJaw = Core.atlas.find("krv-bite-jaw-bottom");
 
-            float clampOffset = Mathf.curve(e.fin(), 0f, 0.25f);
+            float clampOffset = Mathf.curve(e.fin(), 0f, 0.2f);
             float currentDistance = (1f - clampOffset) * 16f;
 
             Draw.color(Color.white, e.fout());
@@ -105,10 +100,11 @@ public class KVREffects {
                 Draw.rect(bottomJaw, e.x, e.y - currentDistance);
             }
 
-            if (e.fin() > 0.25f) {
-                Draw.color(Color.valueOf("c084fc"), Color.valueOf("38bdf8"), e.fin());
-                Angles.randLenVectors(e.id, 8, e.fin() * 18f, (x, y) -> {
-                    Fill.circle(e.x + x, e.y + y, e.fout() * 2.2f);
+            if (e.fin() > 0.2f) {
+                // Natural red hit particles
+                Draw.color(Color.valueOf("ef4444"), Color.valueOf("991b1b"), e.fin());
+                Angles.randLenVectors(e.id, 8, e.fin() * 16f, (x, y) -> {
+                    Fill.circle(e.x + x, e.y + y, e.fout() * 2.4f);
                 });
             }
         });
