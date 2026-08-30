@@ -60,13 +60,12 @@ public class KVRUnits {
 
             speed = 0.75f;
             drag = 0.4f;
-            hitSize = 14f;
+            hitSize = 10f; // Adjusted for 16x16 sprite
             health = 720f;
             armor = 6f;
             omniMovement = false;
             rotateSpeed = 2.8f;
 
-            // Prevents the static full icon from blocking the animated segments in-world
             drawBody = false;
             drawCell = false;
 
@@ -92,22 +91,23 @@ public class KVRUnits {
                 x = 0f;
                 y = 0f;
                 reload = 90f; // 1.5s per bite
-                shootCone = 360f; // Full sphere prevents angle locking
+                shootCone = 360f;
                 mirror = false;
                 top = true;
                 shootSound = Sounds.none;
 
-                parts.add(new RegionPart("chasm-biter-mandible") {{
+                parts.add(new RegionPart("krv-chasm-biter-mandible") {{
                     x = 3.5f;
-                    y = 1.5f;
+                    y = 6.0f; // Sits at the front rim (+8px boundary) of 16x16 canvas
+                    progress = PartProgress.reload;
                     moveRot = 35f;
-                    moves.add(new PartMove(PartProgress.reload, -1f, -1f, 30f));
+                    moves.add(new PartMove(PartProgress.reload, -0.5f, -0.5f, 25f));
                     mirror = true;
-                    under = false;
+                    under = true; // Tucked underneath head
                 }});
 
-                // 200 Damage, lowered reach to 22px
-                bullet = new MeleeType(200f, 22f);
+                // 200 Damage, point-blank melee reach
+                bullet = new MeleeType(200f, 20f);
             }});
         }
 
