@@ -68,12 +68,10 @@ public class KVRUnits {
 
             healColor = Color.valueOf("c084fc"); // Light purple heal flash
 
-            // Disables double-drawn base, cells, and engine auto-outlines
             drawBody = false;
             drawCell = false;
-            outlines = false;
 
-            // Block crushing & terrain crawl physics
+            // Vanilla CrawlUnit terrain & block crushing physics
             crushDamage = 15f;
             crushFragile = true;
             crawlSlowdown = 0.5f;
@@ -94,7 +92,7 @@ public class KVRUnits {
             weapons.add(new Weapon("chasm-biter-jaw") {{
                 x = 0f;
                 y = 0f;
-                reload = 120f; // Exactly 2.0s per bite cycle
+                reload = 120f; // 2.0s per bite cycle
                 shootCone = 360f;
                 mirror = false;
                 top = true;
@@ -102,23 +100,22 @@ public class KVRUnits {
 
                 parts.add(new RegionPart() {{
                     name = "krv-chasm-biter-mandible";
-                    x = 3.5f; // Original snug jaw position
-                    y = 1.5f;
+                    x = 3.5f;
+                    y = 6.0f; // Snug at front head socket
                     mirror = true;
-                    under = true; // Tucked underneath head
-                    outline = false; // Disables engine auto-outline on mandibles
+                    under = true;
 
-                    // 1. Moving / Stalking Flare: Widens outward when hunting/moving
+                    // 1. Moving / Stalking: Widens out into a menacing V-shape
                     progress = PartProgress.warmup;
-                    moveRot = -22f; // Opens wide outward
-                    moveX = 0.8f;
+                    moveRot = -35f; // Flared open V-shape
+                    moveX = 1.8f;   // Pushes wider on X
 
-                    // 2. Strike Snap: Lightning-fast inward clamp on bite
-                    moves.add(new PartMove(PartProgress.recoil, -1.2f, -0.6f, 42f));
+                    // 2. Attack Strike: Clamps tight inward past neutral
+                    moves.add(new PartMove(PartProgress.recoil, -2.0f, -0.5f, 45f));
                 }});
 
-                // 300 Damage, point-blank reach (22px)
-                bullet = new MeleeType(300f, 22f);
+                // 300 Damage, point-blank reach (20px)
+                bullet = new MeleeType(300f, 20f);
             }});
         }
 
