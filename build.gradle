@@ -1,7 +1,7 @@
 apply plugin: "java"
 
 sourceSets.main.java.srcDirs = ["src"]
-sourceSets.main.resources.srcDirs = ["assets", "."]
+sourceSets.main.resources.srcDirs = ["assets"]
 
 ext{
     // Mindustry version to depend on.
@@ -78,8 +78,6 @@ jar{
     from(projectDir){
         include "mod.json"
         include "icon.png"
-        include "sprites/**"
-        include "sounds/**"
     }
 
     from("assets/"){
