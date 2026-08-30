@@ -64,7 +64,7 @@ public class KVRUnits {
             rotateSpeed = 2.8f;
             drawCell = false;
 
-            // Worm segments (uses chasm-biter-segment0, segment1, segment2)
+            // Worm segments (matches segment0, segment1, segment2)
             segments = 3;
             segmentScl = 3f;
             segmentPhase = 5f;
@@ -73,17 +73,18 @@ public class KVRUnits {
             // Register Devour Ability
             abilities.add(new DevourAbility(0.05f));
 
-            weapons.add(new Weapon("chasm-biter-mandible") {{
+            // Unnamed Weapon: leaves center completely clear with no base sprite
+            weapons.add(new Weapon() {{
                 x = 0f;
                 y = 0f;
                 reload = 90f; // 1.5s per bite
                 shootCone = 35f;
                 mirror = false;
                 top = true;
-                drawRegion = false; // Fixes static middle error box
                 shootSound = Vars.tree.loadSound("krv-bite");
 
-                parts.add(new RegionPart("-mandible") {{
+                // Points directly to your chasm-biter-mandible.png sprite
+                parts.add(new RegionPart("chasm-biter-mandible") {{
                     x = 3.5f;
                     y = 1.5f;
                     moveRot = 35f;
