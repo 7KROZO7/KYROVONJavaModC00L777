@@ -16,7 +16,7 @@ public class MeleeType extends BulletType {
         super(3.5f, damage);
 
         this.lifetime = range / 3.5f;
-        this.hitSize = 14f;
+        this.hitSize = 16f;
 
         this.drawSize = 0f;
         this.collides = true;
@@ -24,12 +24,14 @@ public class MeleeType extends BulletType {
         this.collidesAir = false;
         this.pierce = false;
 
-        // Sound on enemy crunch (with fallback if custom audio asset is missing)
-        Sound customBite = Vars.tree.loadSound("bite");
-        this.hitSound = (customBite != null && customBite != Sounds.none) ? customBite : Sounds.plantBreak;
-        this.hitSoundVolume = 1.3f;
+        // Custom bite.ogg audio lookup
+        Sound biteSound = Vars.tree.loadSound("krv-bite");
+        if (biteSound == null || biteSound == Sounds.none) {
+            biteSound = Vars.tree.loadSound("bite");
+        }
+        this.hitSound = (biteSound != null && biteSound != Sounds.none) ? biteSound : Sounds.plantBreak;
+        this.hitSoundVolume = 1.4f;
 
-        // Visual FX & slow debuff
         this.hitEffect = KVREffects.voidBite;
         this.despawnEffect = Fx.none;
         this.shootEffect = Fx.none;
@@ -37,11 +39,11 @@ public class MeleeType extends BulletType {
         this.hitColor = Color.valueOf("ef4444");
 
         this.status = StatusEffects.slow;
-        this.statusDuration = 45f;
+        this.statusDuration = 60f; // 1.0s slow debuff
     }
 
     public MeleeType(float damage) {
-        this(damage, 38f);
+        this(damage, 24f);
     }
 
     @Override
