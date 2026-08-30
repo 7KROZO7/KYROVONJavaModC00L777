@@ -96,7 +96,7 @@ public class KVRUnits {
                 top = true;
                 shootSound = Sounds.none;
 
-                parts.add(new RegionPart("krv-chasm-biter-mandible") {{
+                parts.add(new RegionPart("-mandible") {{
                     x = 3.5f;
                     y = 6.0f; // Sits at the front rim (+8px boundary) of 16x16 canvas
                     progress = PartProgress.reload;
