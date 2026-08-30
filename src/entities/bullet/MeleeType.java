@@ -11,11 +11,11 @@ import mindustry.gen.Bullet;
 public class MeleeType extends BulletType {
 
     public MeleeType(float damage, float range) {
-        super(0.001f, damage);
+        // Forward speed & lifetime give Mindustry AI an accurate distance metric
+        super(3.5f, damage);
 
-        this.range = range;
-        this.hitSize = range;
-        this.lifetime = 2f;
+        this.lifetime = range / 3.5f;
+        this.hitSize = 14f;
 
         this.drawSize = 0f;
         this.collides = true;
@@ -23,15 +23,16 @@ public class MeleeType extends BulletType {
         this.collidesAir = false;
         this.pierce = false;
 
-        // Hit FX & Audio (Plays when teeth crunch an enemy)
-        this.hitEffect = KVREffects.voidBite;
+        // Sound on enemy crunch
         this.hitSound = Vars.tree.loadSound("bite");
         this.hitSoundVolume = 1.2f;
-        this.hitColor = Color.valueOf("ef4444");
 
+        // Visual FX & slow debuff
+        this.hitEffect = KVREffects.voidBite;
         this.despawnEffect = Fx.none;
         this.shootEffect = Fx.none;
         this.smokeEffect = Fx.none;
+        this.hitColor = Color.valueOf("ef4444");
 
         this.status = StatusEffects.slow;
         this.statusDuration = 45f;
