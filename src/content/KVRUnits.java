@@ -7,7 +7,6 @@ import extra.abilities.DevourAbility;
 import extra.ai.CompanionAI;
 import extra.entities.bullet.MeleeType;
 import mindustry.entities.abilities.RegenAbility;
-import mindustry.entities.part.DrawPart.PartMove;
 import mindustry.entities.part.DrawPart.PartProgress;
 import mindustry.entities.part.RegionPart;
 import mindustry.gen.CrawlUnit;
@@ -49,7 +48,7 @@ public class KVRUnits {
             engineColor = Color.valueOf("c084fc");
             trailLength = 12;
             trailColor = Color.valueOf("a855f7");
-            outlineColor = Color.valueOf("2a1645");
+            outlineColor = Color.valueOf("c084fc"); // Light purple outline
         }};
 
         // --- 2. CHASM BITER (Segmented Worm with Devour Melee) ---
@@ -66,7 +65,8 @@ public class KVRUnits {
             omniMovement = false;
             rotateSpeed = 2.8f;
 
-            healColor = Color.valueOf("c084fc"); // Light purple heal flash
+            healColor = Color.valueOf("c084fc");    // Light purple heal flash
+            outlineColor = Color.valueOf("c084fc"); // Light purple outline
 
             drawBody = false;
             drawCell = false;
@@ -101,17 +101,17 @@ public class KVRUnits {
                 parts.add(new RegionPart() {{
                     name = "krv-chasm-biter-mandible";
                     x = 3.5f;
-                    y = 6.0f; // Snug at front head socket
+                    y = 6.0f;
                     mirror = true;
                     under = true;
 
-                    // 1. Moving / Stalking: Widens out into a menacing V-shape
-                    progress = PartProgress.warmup;
-                    moveRot = -35f; // Flared open V-shape
-                    moveX = 1.8f;   // Pushes wider on X
+                    // 1. Resting: Permanently open wide in a V-shape
+                    rotation = -30f;
 
-                    // 2. Attack Strike: Clamps tight inward past neutral
-                    moves.add(new PartMove(PartProgress.recoil, -2.0f, -0.5f, 45f));
+                    // 2. Strike: Snaps shut tight, then smoothly opens back to V
+                    progress = PartProgress.recoil;
+                    moveRot = 35f;
+                    moveX = -1.2f;
                 }});
 
                 // 300 Damage, point-blank reach (20px)
