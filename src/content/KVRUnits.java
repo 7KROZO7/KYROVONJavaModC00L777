@@ -60,28 +60,27 @@ public class KVRUnits {
 
             speed = 0.75f;
             drag = 0.4f;
-            hitSize = 10f; // Snug hitbox for 16x16 sprite
+            hitSize = 14f; // Sized for 50x50 canvas presence
             health = 720f;
             armor = 6f;
             omniMovement = false;
             rotateSpeed = 2.8f;
 
+            healColor = Color.valueOf("c084fc"); // Light purple heal flash
+
             drawBody = false;
             drawCell = false;
 
-            // Vanilla CrawlUnit terrain & block crushing physics
             crushDamage = 15f;
             crushFragile = true;
             crawlSlowdown = 0.5f;
             crawlSlowdownFrac = 0.5f;
 
-            // Worm segments (matches segment0, segment1, segment2)
             segments = 3;
             segmentScl = 3f;
             segmentPhase = 5f;
             segmentMag = 0.5f;
 
-            // Passive HP Regen & Kill Devour
             abilities.add(new RegenAbility() {{
                 amount = 0.8f;
             }});
@@ -90,35 +89,35 @@ public class KVRUnits {
             weapons.add(new Weapon("chasm-biter-jaw") {{
                 x = 0f;
                 y = 0f;
-                reload = 90f; // 1.5s per bite cycle
-                shootCone = 360f; // Full spherical cone
+                reload = 120f; // 2.0s per bite cycle
+                shootCone = 360f;
                 mirror = false;
                 top = true;
                 shootSound = Sounds.none;
 
                 parts.add(new RegionPart() {{
                     name = "krv-chasm-biter-mandible";
-                    x = 3.5f;
-                    y = 6.0f; // Front boundary of 16x16 canvas
+                    x = 7.0f;  // Scaled for 50x50 width
+                    y = 12.0f; // Scaled for 50x50 front placement
                     mirror = true;
-                    under = true; // Tucked underneath crawler head
+                    under = true;
 
-                    // 1. Strike Snap: Lightning-fast inward crunch upon firing
+                    // Idle is straight (0 deg)
+                    // Strike: Snaps shut inward violently
                     progress = PartProgress.recoil;
-                    moveRot = 42f;  // Slams inward
-                    moveX = -1.2f;  // Clamps toward center
-                    moveY = -0.6f;  // Slight force retraction
+                    moveRot = 45f;   // Clamps inward shut
+                    moveX = -2.0f;
+                    moveY = -1.0f;
 
-                    // 2. Flare Widen: Menacingly opens wide across the 1.5s reload
-                    moves.add(new PartMove(PartProgress.reload, 0.8f, 0.4f, -18f));
+                    // Pre-strike / cycle: Widens open outward before clamping
+                    moves.add(new PartMove(PartProgress.reload, 1.5f, 0.5f, -28f));
                 }});
 
-                // 200 Damage, point-blank reach (20px)
-                bullet = new MeleeType(200f, 20f);
+                // 300 Damage, point-blank reach (24px)
+                bullet = new MeleeType(300f, 24f);
             }});
         }
 
-        // Texture Loader Override for the 3 crawler segments
         @Override
         public void load() {
             super.load();
