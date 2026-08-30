@@ -53,17 +53,6 @@ public class KVRUnits {
         }};
 
         // --- 2. CHASM BITER (Segmented Worm with Devour Melee) ---
-        // Declare mandiblePart as a field so it's accessible in the load() override
-        final RegionPart mandiblePart = new RegionPart("-mandible") {{
-            x = 3.5f;
-            y = 6.0f; // 16x16 front boundary alignment
-            progress = PartProgress.reload;
-            moveRot = 35f;
-            moves.add(new PartMove(PartProgress.reload, -0.5f, -0.5f, 25f));
-            mirror = true;
-            under = true; // Renders tucked underneath the crawler head
-        }};
-
         chasmBiter = new UnitType("chasm-biter") {{
             localizedName = "Chasm Biter";
             description = "A heavy segmented rift beast. Devours defeated prey to regenerate its armor and flesh.";
@@ -101,25 +90,38 @@ public class KVRUnits {
             weapons.add(new Weapon("chasm-biter-jaw") {{
                 x = 0f;
                 y = 0f;
-                reload = 90f; // 1.5s per bite
-                shootCone = 360f; // Full spherical bite cone
+                reload = 90f; // 1.5s per bite cycle
+                shootCone = 360f; // Full spherical cone
                 mirror = false;
                 top = true;
                 shootSound = Sounds.none;
 
-                parts.add(mandiblePart);
+                parts.add(new RegionPart() {{
+                    name = "krv-chasm-biter-mandible";
+                    x = 3.5f;
+                    y = 6.0f; // Front boundary of 16x16 canvas
+                    mirror = true;
+                    under = true; // Tucked underneath crawler head
+
+                    // 1. Strike Snap: Lightning-fast inward crunch upon firing
+                    progress = PartProgress.recoil;
+                    moveRot = 42f;  // Slams inward
+                    moveX = -1.2f;  // Clamps toward center
+                    moveY = -0.6f;  // Slight force retraction
+
+                    // 2. Flare Widen: Menacingly opens wide across the 1.5s reload
+                    moves.add(new PartMove(PartProgress.reload, 0.8f, 0.4f, -18f));
+                }});
 
                 // 200 Damage, point-blank reach (20px)
                 bullet = new MeleeType(200f, 20f);
             }});
         }
 
-        // Texture Loader Override to resolve all segments cleanly from mod atlas
+        // Texture Loader Override for the 3 crawler segments
         @Override
         public void load() {
             super.load();
-
-            // 1. Assign all 3 trailing segments
             segmentRegions = new TextureRegion[segments];
             for (int i = 0; i < segments; i++) {
                 segmentRegions[i] = Core.atlas.find(
@@ -127,12 +129,6 @@ public class KVRUnits {
                     Core.atlas.find("chasm-biter-segment" + i, Core.atlas.find("krv-chasm-biter-segment", Core.atlas.find("error")))
                 );
             }
-
-            // 2. Direct memory assignment for mandible texture
-            mandiblePart.region = Core.atlas.find(
-                "krv-chasm-biter-mandible",
-                Core.atlas.find("chasm-biter-mandible", Core.atlas.find("error"))
-            );
         }};
     }
-            }
+}
