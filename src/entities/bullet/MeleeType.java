@@ -14,32 +14,30 @@ public class MeleeType extends BulletType {
 
         this.range = range;
         this.hitSize = range;
-        this.lifetime = 2f; // Instant point-blank contact
+        this.lifetime = 2f;
 
-        // Pure invisible hitbox
         this.drawSize = 0f;
         this.collides = true;
         this.collidesTiles = true;
-        this.collidesAir = false; // Ground-only melee
+        this.collidesAir = false;
         this.pierce = false;
 
-        // Default Melee Effects & Status
         this.hitEffect = KVREffects.voidBite;
         this.despawnEffect = Fx.none;
         this.shootEffect = Fx.none;
         this.smokeEffect = Fx.none;
-        this.hitColor = Color.valueOf("c084fc");
+        this.hitColor = Color.valueOf("ef4444"); // Red
 
         this.status = StatusEffects.slow;
         this.statusDuration = 45f;
     }
 
     public MeleeType(float damage) {
-        this(damage, 20f);
+        this(damage, 36f);
     }
 
     @Override
     public void draw(Bullet b) {
-        // Pure melee: does not draw any bullet sprites or textures
+        // Pure melee: no bullet sprites drawn
     }
 }
