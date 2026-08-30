@@ -65,6 +65,9 @@ public class KVRUnits {
             armor = 6f;
             omniMovement = false;
             rotateSpeed = 2.8f;
+
+            // Prevents the static full icon from blocking the animated segments in-world
+            drawBody = false;
             drawCell = false;
 
             // Vanilla CrawlUnit terrain & block crushing physics
@@ -73,7 +76,7 @@ public class KVRUnits {
             crawlSlowdown = 0.5f;
             crawlSlowdownFrac = 0.5f;
 
-            // Worm segments
+            // Worm segments (matches segment0, segment1, segment2)
             segments = 3;
             segmentScl = 3f;
             segmentPhase = 5f;
@@ -85,7 +88,7 @@ public class KVRUnits {
             }});
             abilities.add(new DevourAbility(0.05f));
 
-            weapons.add(new Weapon() {{
+            weapons.add(new Weapon("chasm-biter-jaw") {{
                 x = 0f;
                 y = 0f;
                 reload = 90f; // 1.5s per bite
@@ -103,12 +106,12 @@ public class KVRUnits {
                     under = false;
                 }});
 
-                // 200 Damage, ~38px reach
-                bullet = new MeleeType(200f, 38f);
+                // 200 Damage, lowered reach to 22px
+                bullet = new MeleeType(200f, 22f);
             }});
         }
 
-        // Texture Loader Override to resolve all 3 segments properly from the mod atlas
+        // Texture Loader Override to resolve all segments cleanly from mod atlas
         @Override
         public void load() {
             super.load();
