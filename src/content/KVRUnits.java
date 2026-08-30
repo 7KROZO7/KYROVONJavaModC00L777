@@ -95,7 +95,10 @@ public class KVRUnits {
                 reload = 120f; // 2.0s per bite cycle
                 shootCone = 360f;
                 mirror = false;
-                top = true;
+                
+                // Renders underneath the unit body layer
+                top = false;
+                layerOffset = -0.01f;
                 shootSound = Sounds.none;
 
                 parts.add(new RegionPart() {{
@@ -104,14 +107,15 @@ public class KVRUnits {
                     y = 6.0f;
                     mirror = true;
                     under = true;
+                    layerOffset = -0.01f;
 
-                    // 1. Resting: Permanently open wide in a V-shape
-                    rotation = -30f;
+                    // 1. Resting: Wide -50 deg V-shape
+                    rotation = -50f;
 
-                    // 2. Strike: Snaps shut tight, then smoothly opens back to V
+                    // 2. Strike: Snaps 55 deg inward shut
                     progress = PartProgress.recoil;
-                    moveRot = 35f;
-                    moveX = -1.2f;
+                    moveRot = 55f;
+                    moveX = -1.5f;
                 }});
 
                 // 300 Damage, point-blank reach (20px)
