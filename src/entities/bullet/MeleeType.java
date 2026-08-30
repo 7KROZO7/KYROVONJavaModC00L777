@@ -1,5 +1,6 @@
 package extra.entities.bullet;
 
+import arc.audio.Sound;
 import arc.graphics.Color;
 import extra.content.KVREffects;
 import mindustry.Vars;
@@ -7,11 +8,11 @@ import mindustry.content.Fx;
 import mindustry.content.StatusEffects;
 import mindustry.entities.bullet.BulletType;
 import mindustry.gen.Bullet;
+import mindustry.gen.Sounds;
 
 public class MeleeType extends BulletType {
 
     public MeleeType(float damage, float range) {
-        // Forward speed & lifetime give Mindustry AI an accurate distance metric
         super(3.5f, damage);
 
         this.lifetime = range / 3.5f;
@@ -23,9 +24,10 @@ public class MeleeType extends BulletType {
         this.collidesAir = false;
         this.pierce = false;
 
-        // Sound on enemy crunch
-        this.hitSound = Vars.tree.loadSound("bite");
-        this.hitSoundVolume = 1.2f;
+        // Sound on enemy crunch (with fallback if custom audio asset is missing)
+        Sound customBite = Vars.tree.loadSound("bite");
+        this.hitSound = (customBite != null && customBite != Sounds.none) ? customBite : Sounds.plantBreak;
+        this.hitSoundVolume = 1.3f;
 
         // Visual FX & slow debuff
         this.hitEffect = KVREffects.voidBite;
