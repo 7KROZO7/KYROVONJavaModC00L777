@@ -4,11 +4,12 @@ import arc.graphics.Color;
 import extra.abilities.DevourAbility;
 import extra.ai.CompanionAI;
 import extra.entities.bullet.MeleeType;
-import mindustry.Vars;
+import mindustry.content.Fx;
 import mindustry.entities.part.DrawPart.PartMove;
 import mindustry.entities.part.DrawPart.PartProgress;
 import mindustry.entities.part.RegionPart;
 import mindustry.gen.CrawlUnit;
+import mindustry.gen.Sounds;
 import mindustry.gen.UnitEntity;
 import mindustry.type.UnitType;
 import mindustry.type.Weapon;
@@ -80,7 +81,7 @@ public class KVRUnits {
                 shootCone = 35f;
                 mirror = false;
                 top = true;
-                shootSound = Vars.tree.loadSound("krv-bite");
+                shootSound = Sounds.none; // Silent air snap, crunches on hit
 
                 parts.add(new RegionPart("chasm-biter-mandible") {{
                     x = 3.5f;
