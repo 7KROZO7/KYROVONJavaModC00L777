@@ -60,7 +60,7 @@ public class KVRUnits {
 
             speed = 0.75f;
             drag = 0.4f;
-            hitSize = 14f; // Sized for 50x50 canvas presence
+            hitSize = 10f;
             health = 720f;
             armor = 6f;
             omniMovement = false;
@@ -68,19 +68,24 @@ public class KVRUnits {
 
             healColor = Color.valueOf("c084fc"); // Light purple heal flash
 
+            // Disables double-drawn base, cells, and engine auto-outlines
             drawBody = false;
             drawCell = false;
+            outlines = false;
 
+            // Block crushing & terrain crawl physics
             crushDamage = 15f;
             crushFragile = true;
             crawlSlowdown = 0.5f;
             crawlSlowdownFrac = 0.5f;
 
+            // Worm segments (matches segment0, segment1, segment2)
             segments = 3;
             segmentScl = 3f;
             segmentPhase = 5f;
             segmentMag = 0.5f;
 
+            // Passive HP Regen & Kill Devour
             abilities.add(new RegenAbility() {{
                 amount = 0.8f;
             }});
@@ -89,7 +94,7 @@ public class KVRUnits {
             weapons.add(new Weapon("chasm-biter-jaw") {{
                 x = 0f;
                 y = 0f;
-                reload = 120f; // 2.0s per bite cycle
+                reload = 120f; // Exactly 2.0s per bite cycle
                 shootCone = 360f;
                 mirror = false;
                 top = true;
@@ -97,24 +102,23 @@ public class KVRUnits {
 
                 parts.add(new RegionPart() {{
                     name = "krv-chasm-biter-mandible";
-                    x = 7.0f;  // Scaled for 50x50 width
-                    y = 12.0f; // Scaled for 50x50 front placement
+                    x = 3.5f; // Original snug jaw position
+                    y = 1.5f;
                     mirror = true;
-                    under = true;
+                    under = true; // Tucked underneath head
+                    outline = false; // Disables engine auto-outline on mandibles
 
-                    // Idle is straight (0 deg)
-                    // Strike: Snaps shut inward violently
-                    progress = PartProgress.recoil;
-                    moveRot = 45f;   // Clamps inward shut
-                    moveX = -2.0f;
-                    moveY = -1.0f;
+                    // 1. Moving / Stalking Flare: Widens outward when hunting/moving
+                    progress = PartProgress.warmup;
+                    moveRot = -22f; // Opens wide outward
+                    moveX = 0.8f;
 
-                    // Pre-strike / cycle: Widens open outward before clamping
-                    moves.add(new PartMove(PartProgress.reload, 1.5f, 0.5f, -28f));
+                    // 2. Strike Snap: Lightning-fast inward clamp on bite
+                    moves.add(new PartMove(PartProgress.recoil, -1.2f, -0.6f, 42f));
                 }});
 
-                // 300 Damage, point-blank reach (24px)
-                bullet = new MeleeType(300f, 24f);
+                // 300 Damage, point-blank reach (22px)
+                bullet = new MeleeType(300f, 22f);
             }});
         }
 
