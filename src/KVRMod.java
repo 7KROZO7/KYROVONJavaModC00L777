@@ -33,7 +33,7 @@ public class KVRMod extends Mod {
             Groups.unit.each(killer -> killer.type == KVRUnits.chasmBiter && killer.team != victim.team && killer.within(victim, 38f), killer -> {
                 float healAmount = Math.max(victim.maxHealth * 0.05f, killer.maxHealth * 0.05f);
                 killer.heal(healAmount);
-                KVREffects.blueHeal.at(killer.x, killer.y); // Blue healing aura
+                KVREffects.purpleHeal.at(killer.x, killer.y); // Light purple healing pulse
             });
         });
 
