@@ -3,10 +3,8 @@ package extra.content;
 import arc.graphics.Color;
 import extra.abilities.DevourAbility;
 import extra.ai.CompanionAI;
+import extra.entities.bullet.MeleeType;
 import mindustry.Vars;
-import mindustry.content.Fx;
-import mindustry.content.StatusEffects;
-import mindustry.entities.bullet.BasicBulletType;
 import mindustry.entities.part.DrawPart.PartMove;
 import mindustry.entities.part.DrawPart.PartProgress;
 import mindustry.entities.part.RegionPart;
@@ -64,9 +62,10 @@ public class KVRUnits {
             armor = 6f;
             omniMovement = false;
             rotateSpeed = 2.8f;
+            drawCell = false;
 
-            // Worm segments
-            segments = 4;
+            // Worm segments (uses chasm-biter-segment0, segment1, segment2)
+            segments = 3;
             segmentScl = 3f;
             segmentPhase = 5f;
             segmentMag = 0.5f;
@@ -74,13 +73,14 @@ public class KVRUnits {
             // Register Devour Ability
             abilities.add(new DevourAbility(0.05f));
 
-            weapons.add(new Weapon("krv-chasm-biter-jaw") {{
+            weapons.add(new Weapon("chasm-biter-mandible") {{
                 x = 0f;
-                y = 5f;
-                reload = 90f; // 1.5 seconds per bite
+                y = 0f;
+                reload = 90f; // 1.5s per bite
                 shootCone = 35f;
                 mirror = false;
                 top = true;
+                drawRegion = false; // Fixes static middle error box
                 shootSound = Vars.tree.loadSound("krv-bite");
 
                 parts.add(new RegionPart("-mandible") {{
@@ -92,32 +92,7 @@ public class KVRUnits {
                     under = false;
                 }});
 
-                // Melee contact sweep connecting with enemy units and buildings
-                bullet = new BasicBulletType(4.0f, 100f) {{
-                    lifetime = 5f; // Sweeps 20px forward
-                    hitSize = 12f;
-                    range = 20f;
-
-                    // Invisible projectile
-                    drawSize = 0f;
-                    width = 0f;
-                    height = 0f;
-
-                    // Collision settings
-                    collides = true;
-                    collidesTiles = true;
-                    collidesAir = false; // Ground-only melee
-                    pierce = false;
-
-                    // Hit effects & sound
-                    hitEffect = KVREffects.voidBite;
-                    despawnEffect = Fx.none;
-                    shootEffect = Fx.none;
-                    smokeEffect = Fx.none;
-
-                    status = StatusEffects.slow;
-                    statusDuration = 45f;
-                }};
+                bullet = new MeleeType(100f, 20f);
             }});
         }};
     }
