@@ -1,6 +1,8 @@
 package extra.content;
 
+import arc.Core;
 import arc.graphics.Color;
+import arc.graphics.g2d.TextureRegion;
 import extra.abilities.DevourAbility;
 import extra.ai.CompanionAI;
 import extra.entities.bullet.MeleeType;
@@ -71,7 +73,7 @@ public class KVRUnits {
             crawlSlowdown = 0.5f;
             crawlSlowdownFrac = 0.5f;
 
-            // Worm segments (matches segment0, segment1, segment2)
+            // Worm segments
             segments = 3;
             segmentScl = 3f;
             segmentPhase = 5f;
@@ -79,7 +81,7 @@ public class KVRUnits {
 
             // Passive HP Regen & Kill Devour
             abilities.add(new RegenAbility() {{
-                amount = 0.8f; // ~48 HP/sec passive regen
+                amount = 0.8f;
             }});
             abilities.add(new DevourAbility(0.05f));
 
@@ -87,7 +89,7 @@ public class KVRUnits {
                 x = 0f;
                 y = 0f;
                 reload = 90f; // 1.5s per bite
-                shootCone = 360f; // Full spherical bite cone prevents angle locking
+                shootCone = 360f; // Full sphere prevents angle locking
                 mirror = false;
                 top = true;
                 shootSound = Sounds.none;
@@ -104,6 +106,19 @@ public class KVRUnits {
                 // 200 Damage, ~38px reach
                 bullet = new MeleeType(200f, 38f);
             }});
+        }
+
+        // Texture Loader Override to resolve all 3 segments properly from the mod atlas
+        @Override
+        public void load() {
+            super.load();
+            segmentRegions = new TextureRegion[segments];
+            for (int i = 0; i < segments; i++) {
+                segmentRegions[i] = Core.atlas.find(
+                    "krv-chasm-biter-segment" + i,
+                    Core.atlas.find("chasm-biter-segment" + i, Core.atlas.find("krv-chasm-biter-segment", Core.atlas.find("error")))
+                );
+            }
         }};
     }
 }
