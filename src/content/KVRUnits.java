@@ -67,13 +67,6 @@ public class KVRUnits {
             omniMovement = false;
             rotateSpeed = 2.8f;
 
-            // Unit-Level Sound Attachment
-            Sound biteSound = Vars.tree.loadSound("krv-bite");
-            if (biteSound == null || biteSound == Sounds.none) {
-                biteSound = Vars.tree.loadSound("bite");
-            }
-            hitSound = (biteSound != null && biteSound != Sounds.none) ? biteSound : Sounds.plantBreak;
-
             healColor = Color.valueOf("c084fc");    // Light purple heal flash
             outlineColor = Color.valueOf("c084fc"); // Light purple outline
 
@@ -108,7 +101,14 @@ public class KVRUnits {
                 // Renders underneath the unit body layer
                 top = false;
                 layerOffset = -0.01f;
-                shootSound = Sounds.none;
+
+                // Sound played when the jaws snap shut
+                Sound biteSound = Vars.tree.loadSound("krv-bite");
+                if (biteSound == null || biteSound == Sounds.none) {
+                    biteSound = Vars.tree.loadSound("bite");
+                }
+                shootSound迷
+                shootSound = (biteSound != null && biteSound != Sounds.none) ? biteSound : Sounds.plantBreak;
 
                 parts.add(new RegionPart() {{
                     name = "krv-chasm-biter-mandible";
