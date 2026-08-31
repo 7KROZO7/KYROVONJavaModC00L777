@@ -1,11 +1,13 @@
 package extra.content;
 
 import arc.Core;
+import arc.audio.Sound;
 import arc.graphics.Color;
 import arc.graphics.g2d.TextureRegion;
 import extra.abilities.DevourAbility;
 import extra.ai.CompanionAI;
 import extra.entities.bullet.MeleeType;
+import mindustry.Vars;
 import mindustry.entities.abilities.RegenAbility;
 import mindustry.entities.part.DrawPart.PartProgress;
 import mindustry.entities.part.RegionPart;
@@ -65,6 +67,13 @@ public class KVRUnits {
             omniMovement = false;
             rotateSpeed = 2.8f;
 
+            // Unit-Level Sound Attachment
+            Sound biteSound = Vars.tree.loadSound("krv-bite");
+            if (biteSound == null || biteSound == Sounds.none) {
+                biteSound = Vars.tree.loadSound("bite");
+            }
+            hitSound = (biteSound != null && biteSound != Sounds.none) ? biteSound : Sounds.plantBreak;
+
             healColor = Color.valueOf("c084fc");    // Light purple heal flash
             outlineColor = Color.valueOf("c084fc"); // Light purple outline
 
@@ -109,13 +118,14 @@ public class KVRUnits {
                     under = true;
                     layerOffset = -0.01f;
 
-                    // 1. Resting: Wide -50 deg V-shape
+                    // 1. Resting: -50 deg wide V-shape
                     rotation = -50f;
 
-                    // 2. Strike: Snaps 55 deg inward shut
+                    // 2. Strike: Snaps 55 deg inward AND thrusts +1.5px forward
                     progress = PartProgress.recoil;
                     moveRot = 55f;
                     moveX = -1.5f;
+                    moveY = 1.5f;
                 }});
 
                 // 300 Damage, point-blank reach (20px)
