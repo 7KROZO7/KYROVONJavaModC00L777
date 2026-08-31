@@ -107,7 +107,6 @@ public class KVRUnits {
                 if (biteSound == null || biteSound == Sounds.none) {
                     biteSound = Vars.tree.loadSound("bite");
                 }
-                shootSound迷
                 shootSound = (biteSound != null && biteSound != Sounds.none) ? biteSound : Sounds.plantBreak;
 
                 parts.add(new RegionPart() {{
